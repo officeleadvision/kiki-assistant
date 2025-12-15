@@ -112,6 +112,10 @@ def is_audio_conversion_required(file_path):
 def convert_audio_to_mp3(file_path):
     """Convert audio file to mp3 format."""
     try:
+        # If already mp3, return as is
+        if file_path.lower().endswith('.mp3'):
+            return file_path
+            
         output_path = os.path.splitext(file_path)[0] + ".mp3"
         audio = AudioSegment.from_file(file_path)
         audio.export(output_path, format="mp3")
@@ -119,7 +123,7 @@ def convert_audio_to_mp3(file_path):
         return output_path
     except Exception as e:
         log.error(f"Error converting audio file: {e}")
-        return None
+        return file_path  # Return original file if conversion fails
 
 
 def set_faster_whisper_model(model: str, auto_update: bool = False):
@@ -183,6 +187,7 @@ class STTConfigForm(BaseModel):
     MISTRAL_API_KEY: str
     MISTRAL_API_BASE_URL: str
     MISTRAL_USE_CHAT_COMPLETIONS: bool
+    ELEVENLABS_API_KEY: str
 
 
 class AudioConfigUpdateForm(BaseModel):
@@ -222,6 +227,7 @@ async def get_audio_config(request: Request, user=Depends(get_admin_user)):
             "MISTRAL_API_KEY": request.app.state.config.AUDIO_STT_MISTRAL_API_KEY,
             "MISTRAL_API_BASE_URL": request.app.state.config.AUDIO_STT_MISTRAL_API_BASE_URL,
             "MISTRAL_USE_CHAT_COMPLETIONS": request.app.state.config.AUDIO_STT_MISTRAL_USE_CHAT_COMPLETIONS,
+            "ELEVENLABS_API_KEY": request.app.state.config.AUDIO_STT_ELEVENLABS_API_KEY,
         },
     }
 
@@ -270,6 +276,9 @@ async def update_audio_config(
     request.app.state.config.AUDIO_STT_MISTRAL_USE_CHAT_COMPLETIONS = (
         form_data.stt.MISTRAL_USE_CHAT_COMPLETIONS
     )
+    request.app.state.config.AUDIO_STT_ELEVENLABS_API_KEY = (
+        form_data.stt.ELEVENLABS_API_KEY
+    )
 
     if request.app.state.config.STT_ENGINE == "":
         request.app.state.faster_whisper_model = set_faster_whisper_model(
@@ -308,6 +317,7 @@ async def update_audio_config(
             "MISTRAL_API_KEY": request.app.state.config.AUDIO_STT_MISTRAL_API_KEY,
             "MISTRAL_API_BASE_URL": request.app.state.config.AUDIO_STT_MISTRAL_API_BASE_URL,
             "MISTRAL_USE_CHAT_COMPLETIONS": request.app.state.config.AUDIO_STT_MISTRAL_USE_CHAT_COMPLETIONS,
+            "ELEVENLABS_API_KEY": request.app.state.config.AUDIO_STT_ELEVENLABS_API_KEY,
         },
     }
 
@@ -607,9 +617,23 @@ def transcription_handler(request, file_path, metadata, user=None):
     elif request.app.state.config.STT_ENGINE == "openai":
         r = None
         try:
+            model = request.app.state.config.STT_MODEL
+            
+            # Determine the correct MIME type and filename based on actual file
+            mime_type, _ = mimetypes.guess_type(file_path)
+            if not mime_type:
+                mime_type = "audio/mpeg"  # Default to mp3
+            
+            # Use the actual filename from file_path to ensure extension matches content
+            actual_filename = os.path.basename(file_path)
+            
+            # GPT-4o transcribe models only support: mp3, mp4, mpeg, mpga, m4a, wav, webm
+            # Ensure we're sending with correct MIME type
+            gpt4o_models = ["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"]
+            
             for language in languages:
                 payload = {
-                    "model": request.app.state.config.STT_MODEL,
+                    "model": model,
                 }
 
                 if language:
@@ -621,12 +645,16 @@ def transcription_handler(request, file_path, metadata, user=None):
                 if user and ENABLE_FORWARD_USER_INFO_HEADERS:
                     headers = include_user_info_headers(headers, user)
 
-                r = requests.post(
-                    url=f"{request.app.state.config.STT_OPENAI_API_BASE_URL}/audio/transcriptions",
-                    headers=headers,
-                    files={"file": (filename, open(file_path, "rb"))},
-                    data=payload,
-                )
+                # Open file and send with correct MIME type
+                with open(file_path, "rb") as audio_file:
+                    files = {"file": (actual_filename, audio_file, mime_type)}
+                    
+                    r = requests.post(
+                        url=f"{request.app.state.config.STT_OPENAI_API_BASE_URL}/audio/transcriptions",
+                        headers=headers,
+                        files=files,
+                        data=payload,
+                    )
 
                 if r.status_code == 200:
                     # Successful transcription
@@ -1024,14 +1052,126 @@ def transcription_handler(request, file_path, metadata, user=None):
                 detail=detail if detail else "Lead Me: Server Connection Error",
             )
 
+    elif request.app.state.config.STT_ENGINE == "elevenlabs":
+        # Check file exists
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=400, detail="Audio file not found")
+
+        # Check file size (ElevenLabs supports up to 3GB)
+        file_size = os.path.getsize(file_path)
+        elevenlabs_max_size = 3 * 1024 * 1024 * 1024  # 3GB
+        if file_size > elevenlabs_max_size:
+            raise HTTPException(
+                status_code=400,
+                detail="File size exceeds ElevenLabs limit of 3GB",
+            )
+
+        api_key = request.app.state.config.AUDIO_STT_ELEVENLABS_API_KEY
+
+        if not api_key:
+            raise HTTPException(
+                status_code=400,
+                detail="ElevenLabs API key is required for ElevenLabs STT",
+            )
+
+        r = None
+        try:
+            # Use scribe_v1 as the default model for high-accuracy transcription
+            model = request.app.state.config.STT_MODEL or "scribe_v1"
+
+            log.info(f"ElevenLabs STT - model: {model}")
+
+            # Determine the MIME type
+            mime_type, _ = mimetypes.guess_type(file_path)
+            if not mime_type:
+                mime_type = "audio/mpeg"
+
+            # Prepare the request to ElevenLabs Speech-to-Text API
+            url = f"{ELEVENLABS_API_BASE_URL}/v1/speech-to-text"
+
+            # Build form data
+            form_data = {"model_id": model}
+
+            # Add language if specified in metadata
+            language = metadata.get("language", None) if metadata else None
+            if language:
+                form_data["language_code"] = language
+
+            # Use context manager to ensure file is properly closed
+            with open(file_path, "rb") as audio_file:
+                files = {"file": (filename, audio_file, mime_type)}
+
+                r = requests.post(
+                    url=url,
+                    files=files,
+                    data=form_data,
+                    headers={
+                        "xi-api-key": api_key,
+                    },
+                )
+
+            r.raise_for_status()
+            response = r.json()
+
+            # Extract transcript from ElevenLabs response
+            # ElevenLabs returns {"text": "...", "words": [...], ...}
+            transcript = response.get("text", "").strip()
+            if not transcript:
+                raise ValueError("Empty transcript in response")
+
+            data = {"text": transcript}
+
+            # Save transcript to json file (consistent with other providers)
+            transcript_file = f"{file_dir}/{id}.json"
+            with open(transcript_file, "w") as f:
+                json.dump(data, f)
+
+            log.debug(data)
+            return data
+
+        except ValueError as e:
+            log.exception("Error parsing ElevenLabs response")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to parse ElevenLabs response: {str(e)}",
+            )
+        except requests.exceptions.RequestException as e:
+            log.exception(e)
+            detail = None
+
+            try:
+                if r is not None and r.status_code != 200:
+                    res = r.json()
+                    if "detail" in res:
+                        detail = f"External: {res['detail'].get('message', res['detail'])}"
+                    elif "error" in res:
+                        detail = f"External: {res['error'].get('message', res['error'])}"
+                    else:
+                        detail = f"External: {r.text}"
+            except Exception:
+                detail = f"External: {e}"
+
+            raise HTTPException(
+                status_code=getattr(r, "status_code", 500) if r else 500,
+                detail=detail if detail else "Lead Me: Server Connection Error",
+            )
+
 
 def transcribe(
     request: Request, file_path: str, metadata: Optional[dict] = None, user=None
 ):
     log.info(f"transcribe: {file_path} {metadata}")
 
-    if is_audio_conversion_required(file_path):
-        file_path = convert_audio_to_mp3(file_path)
+    # Check if using GPT-4o transcribe models which have stricter format requirements
+    gpt4o_models = ["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "gpt-4o-transcribe-diarize"]
+    stt_model = getattr(request.app.state.config, 'STT_MODEL', '')
+    
+    # Force MP3 conversion for GPT-4o models or when audio conversion is required
+    # GPT-4o models work best with mp3 format
+    if stt_model in gpt4o_models or is_audio_conversion_required(file_path):
+        converted_path = convert_audio_to_mp3(file_path)
+        if converted_path:
+            file_path = converted_path
 
     try:
         file_path = compress_audio(file_path)

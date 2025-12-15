@@ -53,6 +53,7 @@
 	let STT_MISTRAL_API_KEY = '';
 	let STT_MISTRAL_API_BASE_URL = '';
 	let STT_MISTRAL_USE_CHAT_COMPLETIONS = false;
+	let STT_ELEVENLABS_API_KEY = '';
 
 	let STT_WHISPER_MODEL_LOADING = false;
 
@@ -141,7 +142,8 @@
 				AZURE_MAX_SPEAKERS: STT_AZURE_MAX_SPEAKERS,
 				MISTRAL_API_KEY: STT_MISTRAL_API_KEY,
 				MISTRAL_API_BASE_URL: STT_MISTRAL_API_BASE_URL,
-				MISTRAL_USE_CHAT_COMPLETIONS: STT_MISTRAL_USE_CHAT_COMPLETIONS
+				MISTRAL_USE_CHAT_COMPLETIONS: STT_MISTRAL_USE_CHAT_COMPLETIONS,
+				ELEVENLABS_API_KEY: STT_ELEVENLABS_API_KEY
 			}
 		});
 
@@ -193,6 +195,7 @@
 			STT_MISTRAL_API_KEY = res.stt.MISTRAL_API_KEY;
 			STT_MISTRAL_API_BASE_URL = res.stt.MISTRAL_API_BASE_URL;
 			STT_MISTRAL_USE_CHAT_COMPLETIONS = res.stt.MISTRAL_USE_CHAT_COMPLETIONS;
+			STT_ELEVENLABS_API_KEY = res.stt.ELEVENLABS_API_KEY;
 		}
 
 		await getVoices();
@@ -245,6 +248,7 @@
 							<option value="deepgram">{$i18n.t('Deepgram')}</option>
 							<option value="azure">{$i18n.t('Azure AI Speech')}</option>
 							<option value="mistral">{$i18n.t('MistralAI')}</option>
+							<option value="elevenlabs">{$i18n.t('ElevenLabs')}</option>
 						</select>
 					</div>
 				</div>
@@ -436,6 +440,43 @@
 							{$i18n.t(
 								'Use /v1/chat/completions endpoint instead of /v1/audio/transcriptions for potentially better accuracy.'
 							)}
+						</div>
+					</div>
+				{:else if STT_ENGINE === 'elevenlabs'}
+					<div>
+						<div class="mt-1 flex gap-2 mb-1">
+							<SensitiveInput
+								placeholder={$i18n.t('API Key')}
+								bind:value={STT_ELEVENLABS_API_KEY}
+								required
+							/>
+						</div>
+					</div>
+
+					<hr class="border-gray-100/30 dark:border-gray-850/30 my-2" />
+
+					<div>
+						<div class=" mb-1.5 text-xs font-medium">{$i18n.t('STT Model')}</div>
+						<div class="flex w-full">
+							<div class="flex-1">
+								<select
+									class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-500 dark:bg-gray-850 outline-hidden"
+									bind:value={STT_MODEL}
+								>
+									<option value="scribe_v1">{$i18n.t('Scribe v1 (High Accuracy)')}</option>
+									<option value="scribe_v2">{$i18n.t('Scribe v2 Realtime (Low Latency)')}</option>
+								</select>
+							</div>
+						</div>
+						<div class="mt-2 mb-1 text-xs text-gray-400 dark:text-gray-500">
+							{$i18n.t('Scribe v1 is optimized for high-accuracy transcription across 99 languages.')}
+							<a
+								class=" hover:underline dark:text-gray-200 text-gray-800"
+								href="https://elevenlabs.io/docs/capabilities/speech-to-text"
+								target="_blank"
+							>
+								{$i18n.t('Learn more about ElevenLabs Speech-to-Text.')}
+							</a>
 						</div>
 					</div>
 				{:else if STT_ENGINE === ''}

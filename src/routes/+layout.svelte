@@ -723,9 +723,7 @@
 			const browserLanguages = navigator.languages
 				? navigator.languages
 				: [navigator.language || navigator.userLanguage];
-			const lang = backendConfig.default_locale
-				? backendConfig.default_locale
-				: bestMatchingLanguage(languages, browserLanguages, 'en-US');
+			const lang = backendConfig.default_locale ? backendConfig.default_locale : 'bg-BG'; // Default to Bulgarian for new users
 			changeLanguage(lang);
 			dayjs.locale(lang);
 		}
