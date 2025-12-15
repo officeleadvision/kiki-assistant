@@ -93,7 +93,7 @@
 			<div class=" text-[13px] font-medium mb-0.5 line-clamp-1">{title}</div>
 		{/if}
 
-		<div class=" line-clamp-2 text-xs self-center dark:text-gray-300 font-normal">
+		<div class=" line-clamp-2 text-xs self-center dark:text-gray-500 font-normal">
 			{@html DOMPurify.sanitize(marked(content))}
 		</div>
 	</div>

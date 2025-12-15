@@ -98,7 +98,7 @@
 
 <Modal size="md" bind:show>
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
+		<div class=" flex justify-between dark:text-gray-500 px-5 pt-4 pb-1">
 			<div class=" text-lg font-medium self-center">
 				{#if edit}
 					{$i18n.t('Edit Folder')}
@@ -130,7 +130,7 @@
 						<div class="flex-1">
 							<input
 								id="folder-name"
-								class="w-full text-sm bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden"
+								class="w-full text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-700 outline-hidden"
 								type="text"
 								bind:value={name}
 								placeholder={$i18n.t('Enter folder name')}

@@ -85,7 +85,7 @@
 
 	<slot name="content">
 		<DropdownMenu.Content
-			class="w-full {className}  rounded-2xl px-1 py-1  border border-gray-100  dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg text-sm"
+			class="w-full {className}  rounded-2xl px-1 py-1  border border-gray-100 z-50 bg-white text-primary shadow-lg text-sm"
 			sideOffset={4}
 			side="top"
 			align="end"
@@ -134,7 +134,7 @@
 				{#if $user?.status_emoji || $user?.status_message}
 					<div class="mx-1">
 						<button
-							class="mb-1 w-full gap-2 px-2.5 py-1.5 rounded-xl bg-gray-50 dark:text-white dark:bg-gray-900/50 text-black transition text-xs flex items-center"
+							class="mb-1 w-full gap-2 px-2.5 py-1.5 rounded-xl bg-primary/5 text-primary transition text-xs flex items-center"
 							type="button"
 							on:click={() => {
 								show = false;
@@ -185,7 +185,7 @@
 				{:else}
 					<div class="mx-1">
 						<button
-							class="mb-1 w-full px-3 py-1.5 gap-1 rounded-xl bg-gray-50 dark:text-white dark:bg-gray-900/50 text-black transition text-xs flex items-center justify-center"
+							class="mb-1 w-full px-3 py-1.5 gap-1 rounded-xl bg-primary/5 text-primary transition text-xs flex items-center justify-center"
 							type="button"
 							on:click={() => {
 								show = false;
@@ -204,7 +204,7 @@
 			{/if}
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer"
+				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-primary/5 transition cursor-pointer"
 				on:click={async () => {
 					show = false;
 
@@ -223,7 +223,7 @@
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer"
+				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-primary/5 transition cursor-pointer"
 				on:click={async () => {
 					show = false;
 
@@ -246,7 +246,7 @@
 				<DropdownMenu.Item
 					as="a"
 					href="/playground"
-					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition select-none"
+					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-primary/5 transition select-none"
 					on:click={async () => {
 						show = false;
 						if ($mobile) {
@@ -263,7 +263,7 @@
 				<DropdownMenu.Item
 					as="a"
 					href="/admin"
-					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition select-none"
+					class="flex rounded-xl py-1.5 px-3 w-full hover:bg-primary/5 transition select-none"
 					on:click={async () => {
 						show = false;
 						if ($mobile) {
@@ -288,12 +288,12 @@
 					<DropdownMenu.Item
 						as="a"
 						target="_blank"
-						class="flex gap-3 items-center py-1.5 px-3 text-sm select-none w-full cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
+						class="flex gap-3 items-center py-1.5 px-3 text-sm select-none w-full cursor-pointer hover:bg-primary/5 rounded-xl transition"
 						id="chat-share-button"
 						on:click={() => {
 							show = false;
 						}}
-						href="https://docs.openwebui.com"
+						href="https://docs.Lead Me.com"
 					>
 						<QuestionMarkCircle className="size-5" />
 						<div class="flex items-center">{$i18n.t('Documentation')}</div>
@@ -303,7 +303,7 @@
 					<DropdownMenu.Item
 						as="a"
 						target="_blank"
-						class="flex gap-3 items-center py-1.5 px-3 text-sm select-none w-full cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition"
+						class="flex gap-3 items-center py-1.5 px-3 text-sm select-none w-full cursor-pointer hover:bg-primary/5 rounded-xl transition"
 						id="chat-share-button"
 						on:click={() => {
 							show = false;
@@ -336,7 +336,7 @@
 			<hr class=" border-gray-50/30 dark:border-gray-800/30 my-1 p-0" />
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+				class="flex rounded-xl py-1.5 px-3 w-full hover:bg-primary/5 transition"
 				on:click={async () => {
 					const res = await userSignOut();
 					user.set(null);

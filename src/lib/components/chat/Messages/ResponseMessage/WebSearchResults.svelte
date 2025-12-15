@@ -26,7 +26,7 @@
 			<a
 				href="https://www.google.com/search?q={status.query}"
 				target="_blank"
-				class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-300 font-normal! no-underline!"
+				class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-500 font-normal! no-underline!"
 			>
 				<div class="flex gap-2 items-center">
 					<Search />
@@ -61,7 +61,7 @@
 				<a
 					href={item.link}
 					target="_blank"
-					class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-850 rounded-lg font-normal! no-underline! mb-1"
+					class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-850 rounded-lg font-normal! no-underline! mb-1"
 				>
 					<div class=" flex justify-center items-center gap-3">
 						<div class="w-fit">
@@ -101,7 +101,7 @@
 				<a
 					href={url}
 					target="_blank"
-					class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-850 rounded-lg no-underline mb-1"
+					class="flex w-full items-center p-1 px-3 group/item justify-between text-gray-800 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-850 rounded-lg no-underline mb-1"
 				>
 					<div class=" flex justify-center items-center gap-3">
 						<div class="w-fit">

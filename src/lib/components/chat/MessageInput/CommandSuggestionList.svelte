@@ -151,7 +151,7 @@
 				/>
 			{/if}
 		{:else}
-			<div class="py-4 flex flex-col w-full rounded-xl text-gray-700 dark:text-gray-300">
+			<div class="py-4 flex flex-col w-full rounded-xl text-gray-700 dark:text-gray-500">
 				<Spinner />
 			</div>
 		{/if}

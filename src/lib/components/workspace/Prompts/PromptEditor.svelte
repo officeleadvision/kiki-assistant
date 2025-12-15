@@ -163,17 +163,17 @@
 
 				<div class="text-xs text-gray-400 dark:text-gray-500">
 					ⓘ {$i18n.t('Format your variables using brackets like this:')}&nbsp;<span
-						class=" text-gray-600 dark:text-gray-300 font-medium"
+						class=" text-gray-600 dark:text-gray-500 font-medium"
 						>{'{{'}{$i18n.t('variable')}{'}}'}</span
 					>.
 					{$i18n.t('Make sure to enclose them with')}
-					<span class=" text-gray-600 dark:text-gray-300 font-medium">{'{{'}</span>
+					<span class=" text-gray-600 dark:text-gray-500 font-medium">{'{{'}</span>
 					{$i18n.t('and')}
-					<span class=" text-gray-600 dark:text-gray-300 font-medium">{'}}'}</span>.
+					<span class=" text-gray-600 dark:text-gray-500 font-medium">{'}}'}</span>.
 				</div>
 
 				<div class="text-xs text-gray-400 dark:text-gray-500 underline">
-					<a href="https://docs.openwebui.com/features/workspace/prompts" target="_blank">
+					<a href="https://docs.Lead Me.com/features/workspace/prompts" target="_blank">
 						{$i18n.t('To learn more about powerful prompt variables, click here')}
 					</a>
 				</div>

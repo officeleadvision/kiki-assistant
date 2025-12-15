@@ -122,7 +122,7 @@
 
 <Modal size="sm" bind:show>
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
+		<div class=" flex justify-between dark:text-gray-500 px-5 pt-4 pb-1">
 			<div class=" text-lg font-medium self-center">
 				{#if edit}
 					{$i18n.t('Edit Channel')}
@@ -164,7 +164,7 @@
 									placement="top-start"
 								>
 									<select
-										class="w-full text-sm bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden"
+										class="w-full text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-700 outline-hidden"
 										bind:value={type}
 									>
 										{#each channelTypes as channelType, channelTypeIdx (channelType)}
@@ -184,7 +184,7 @@
 						</div>
 					{/if}
 
-					<div class=" text-gray-300 dark:text-gray-700 text-xs">
+					<div class=" text-gray-500 dark:text-gray-700 text-xs">
 						{#if type === ''}
 							{$i18n.t('Discussion channel where access is based on groups and permissions')}
 						{:else if type === 'group'}
@@ -204,7 +204,7 @@
 
 						<div class="flex-1">
 							<input
-								class="w-full text-sm bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden"
+								class="w-full text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-700 outline-hidden"
 								type="text"
 								bind:value={name}
 								placeholder={`${$i18n.t('new-channel')}`}

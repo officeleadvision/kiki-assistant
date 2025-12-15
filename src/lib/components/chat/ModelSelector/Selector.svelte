@@ -383,7 +383,7 @@
 		<div
 			class="flex w-full text-left px-0.5 bg-transparent truncate {triggerClassName} justify-between {($settings?.highContrastMode ??
 			false)
-				? 'dark:placeholder-gray-100 placeholder-gray-800'
+				? 'placeholder-primary'
 				: 'placeholder-gray-400'}"
 			on:mouseenter={async () => {
 				models.set(
@@ -450,7 +450,7 @@
 			<div class="px-2">
 				{#if tags && items.filter((item) => !(item.model?.info?.meta?.hidden ?? false)).length > 0}
 					<div
-						class=" flex w-full bg-white dark:bg-gray-850 overflow-x-auto scrollbar-none font-[450] mb-0.5"
+						class=" flex w-full bg-white overflow-x-auto scrollbar-none font-[450] mb-0.5"
 						on:wheel={(e) => {
 							if (e.deltaY !== 0) {
 								e.preventDefault();
@@ -467,7 +467,7 @@
 									class="min-w-fit outline-none px-1.5 py-0.5 {selectedTag === '' &&
 									selectedConnectionType === ''
 										? ''
-										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
+										: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									aria-pressed={selectedTag === '' && selectedConnectionType === ''}
 									on:click={() => {
 										selectedConnectionType = '';
@@ -482,7 +482,7 @@
 								<button
 									class="min-w-fit outline-none px-1.5 py-0.5 {selectedConnectionType === 'local'
 										? ''
-										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
+										: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									aria-pressed={selectedConnectionType === 'local'}
 									on:click={() => {
 										selectedTag = '';
@@ -497,7 +497,7 @@
 								<button
 									class="min-w-fit outline-none px-1.5 py-0.5 {selectedConnectionType === 'external'
 										? ''
-										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
+										: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									aria-pressed={selectedConnectionType === 'external'}
 									on:click={() => {
 										selectedTag = '';
@@ -512,7 +512,7 @@
 								<button
 									class="min-w-fit outline-none px-1.5 py-0.5 {selectedConnectionType === 'direct'
 										? ''
-										: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
+										: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 									aria-pressed={selectedConnectionType === 'direct'}
 									on:click={() => {
 										selectedTag = '';
@@ -528,7 +528,7 @@
 									<button
 										class="min-w-fit outline-none px-1.5 py-0.5 {selectedTag === tag
 											? ''
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
+											: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition capitalize"
 										aria-pressed={selectedTag === tag}
 										on:click={() => {
 											selectedConnectionType = '';
@@ -562,7 +562,7 @@
 					/>
 				{:else}
 					<div class="">
-						<div class="block px-3 py-2 text-sm text-gray-700 dark:text-gray-100">
+						<div class="block px-3 py-2 text-sm text-primary">
 							{$i18n.t('No results found')}
 						</div>
 					</div>
@@ -590,7 +590,7 @@
 
 				{#each Object.keys($MODEL_DOWNLOAD_POOL) as model}
 					<div
-						class="flex w-full justify-between font-medium select-none rounded-button py-2 pl-3 pr-1.5 text-sm text-gray-700 dark:text-gray-100 outline-hidden transition-all duration-75 rounded-xl cursor-pointer data-highlighted:bg-muted"
+						class="flex w-full justify-between font-medium select-none rounded-button py-2 pl-3 pr-1.5 text-sm text-primary outline-hidden transition-all duration-75 rounded-xl cursor-pointer data-highlighted:bg-muted"
 					>
 						<div class="flex">
 							<div class="mr-2.5 translate-y-0.5">
@@ -611,7 +611,7 @@
 								</div>
 
 								{#if 'digest' in $MODEL_DOWNLOAD_POOL[model] && $MODEL_DOWNLOAD_POOL[model].digest}
-									<div class="-mt-1 h-fit text-[0.7rem] dark:text-gray-500 line-clamp-1">
+									<div class="-mt-1 h-fit text-[0.7rem] text-primary/50 line-clamp-1">
 										{$MODEL_DOWNLOAD_POOL[model].digest}
 									</div>
 								{/if}
@@ -627,7 +627,7 @@
 									}}
 								>
 									<svg
-										class="w-4 h-4 text-gray-800 dark:text-white"
+										class="w-4 h-4 text-primary"
 										aria-hidden="true"
 										xmlns="http://www.w3.org/2000/svg"
 										width="24"

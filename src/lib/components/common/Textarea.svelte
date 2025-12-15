@@ -9,7 +9,7 @@
 	export let required = false;
 	export let readonly = false;
 	export let className =
-		'w-full rounded-lg px-3.5 py-2 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden  h-full';
+		'w-full rounded-xl px-3.5 py-2 text-sm bg-primary/5 text-primary border border-primary/10 outline-hidden h-full';
 
 	export let onInput = () => {};
 	export let onBlur = () => {};

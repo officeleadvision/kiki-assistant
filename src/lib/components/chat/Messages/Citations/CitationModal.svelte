@@ -60,7 +60,7 @@
 
 <Modal size="lg" bind:show>
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-4.5 pt-3 pb-2">
+		<div class=" flex justify-between dark:text-gray-500 px-4.5 pt-3 pb-2">
 			<div class=" text-lg font-medium self-center flex items-center">
 				{#if citation?.source?.name}
 					{@const document = mergedDocuments?.[0]}
@@ -110,7 +110,7 @@
 					<div class="flex flex-col w-full gap-2">
 						{#if document.metadata?.parameters}
 							<div>
-								<div class="text-sm font-medium dark:text-gray-300 mb-1">
+								<div class="text-sm font-medium dark:text-gray-500 mb-1">
 									{$i18n.t('Parameters')}
 								</div>
 
@@ -121,7 +121,7 @@
 
 						<div>
 							<div
-								class=" text-sm font-medium dark:text-gray-300 flex items-center gap-2 w-fit mb-1"
+								class=" text-sm font-medium dark:text-gray-500 flex items-center gap-2 w-fit mb-1"
 							>
 								{$i18n.t('Content')}
 

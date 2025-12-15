@@ -276,7 +276,7 @@
 												connectionType = connectionType === 'local' ? 'external' : 'local';
 											}}
 											type="button"
-											class=" text-xs text-gray-700 dark:text-gray-300"
+											class=" text-xs text-gray-700 dark:text-gray-500"
 										>
 											{#if connectionType === 'local'}
 												{$i18n.t('Local')}
@@ -301,7 +301,7 @@
 								<div class="flex-1">
 									<input
 										id="url-input"
-										class={`w-full text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+										class={`w-full text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-700'}`}
 										type="text"
 										bind:value={url}
 										placeholder={$i18n.t('API Base URL')}
@@ -358,7 +358,7 @@
 									<div class="flex-shrink-0 self-start">
 										<select
 											id="select-bearer-or-session"
-											class={`dark:bg-gray-900 w-full text-sm bg-transparent pr-5 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+											class={`dark:bg-gray-900 w-full text-sm bg-transparent pr-5 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-700'}`}
 											bind:value={auth_type}
 										>
 											<option value="none">{$i18n.t('None')}</option>
@@ -458,7 +458,7 @@
 										)}
 									>
 										<input
-											class={`w-full text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+											class={`w-full text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-700'}`}
 											type="text"
 											id="prefix-id-input"
 											bind:value={prefixId}
@@ -485,7 +485,7 @@
 											azure = !azure;
 										}}
 										type="button"
-										class=" text-xs text-gray-700 dark:text-gray-300"
+										class=" text-xs text-gray-700 dark:text-gray-500"
 									>
 										{azure ? $i18n.t('Azure OpenAI') : $i18n.t('OpenAI')}
 									</button>
@@ -506,7 +506,7 @@
 									<div class="flex-1">
 										<input
 											id="api-version-input"
-											class={`w-full text-sm bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-700 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+											class={`w-full text-sm bg-transparent placeholder:text-gray-500 dark:placeholder:text-gray-700 ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-700'}`}
 											type="text"
 											bind:value={apiVersion}
 											placeholder={$i18n.t('API Version')}
@@ -581,7 +581,7 @@
 									? ''
 									: 'text-gray-500'} {($settings?.highContrastMode ?? false)
 									? 'dark:placeholder:text-gray-100 placeholder:text-gray-700'
-									: 'placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden'}"
+									: 'placeholder:text-gray-500 dark:placeholder:text-gray-700 outline-hidden'}"
 								bind:value={modelId}
 								id="add-model-id-input"
 								placeholder={$i18n.t('Add a model ID')}

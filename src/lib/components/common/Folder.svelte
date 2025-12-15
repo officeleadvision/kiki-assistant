@@ -17,7 +17,7 @@
 	export let collapsible = true;
 
 	export let className = '';
-	export let buttonClassName = 'text-gray-600 dark:text-gray-400';
+	export let buttonClassName = 'text-primary/70';
 
 	export let chevron = true;
 	export let onAddLabel: string = '';
@@ -170,7 +170,7 @@
 
 					{#if onAdd}
 						<button
-							class="absolute z-10 right-2 invisible group-hover:visible self-center flex items-center dark:text-gray-300"
+							class="absolute z-10 right-2 invisible group-hover:visible self-center flex items-center dark:text-gray-500"
 							on:pointerup={(e) => {
 								e.stopPropagation();
 							}}
@@ -181,7 +181,7 @@
 						>
 							<Tooltip content={onAddLabel}>
 								<button
-									class="p-0.5 dark:hover:bg-gray-850 rounded-lg touch-auto"
+									class="p-0.5 hover:bg-primary-50 rounded-lg touch-auto"
 									on:click={(e) => {}}
 								>
 									<Plus className=" size-3" strokeWidth="2.5" />

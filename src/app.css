@@ -141,7 +141,7 @@ li p {
 
 ::-webkit-scrollbar-thumb {
 	--tw-border-opacity: 1;
-	background-color: rgba(215, 215, 215, 0.6);
+	background-color: rgba(30, 58, 95, 0.3);
 	border-color: rgba(255, 255, 255, var(--tw-border-opacity));
 	border-radius: 9999px;
 	border-width: 1px;
@@ -149,8 +149,8 @@ li p {
 
 /* Dark theme scrollbar styles */
 .dark ::-webkit-scrollbar-thumb {
-	background-color: rgba(67, 67, 67, 0.6); /* Darker color for dark theme */
-	border-color: rgba(0, 0, 0, var(--tw-border-opacity));
+	background-color: rgba(30, 58, 95, 0.4);
+	border-color: rgba(248, 250, 252, var(--tw-border-opacity));
 }
 
 ::-webkit-scrollbar {
@@ -178,11 +178,11 @@ select {
 }
 
 .dark select:not([class*='bg-transparent']) {
-	@apply bg-gray-900 text-gray-300;
+	@apply bg-white text-primary;
 }
 
 .dark select option {
-	@apply bg-gray-850 text-white;
+	@apply bg-gray-50 text-primary;
 }
 
 @keyframes shimmer {
@@ -195,23 +195,23 @@ select {
 }
 
 .shimmer {
-	background: linear-gradient(90deg, #9a9b9e 25%, #2a2929 50%, #9a9b9e 75%);
+	background: linear-gradient(90deg, #1e3a5f 25%, #3a78ad 50%, #1e3a5f 75%);
 	background-size: 200% 100%;
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	animation: shimmer 4s linear infinite;
-	color: #818286; /* Fallback color */
+	color: #1e3a5f; /* Fallback color */
 }
 
 :global(.dark) .shimmer {
-	background: linear-gradient(90deg, #818286 25%, #eae5e5 50%, #818286 75%);
+	background: linear-gradient(90deg, #3a78ad 25%, #8bb3d5 50%, #3a78ad 75%);
 	background-size: 200% 100%;
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	animation: shimmer 4s linear infinite;
-	color: #a1a3a7; /* Darker fallback color for dark mode */
+	color: #3a78ad; /* Lighter fallback color for dark mode */
 }
 
 @keyframes smoothFadeIn {
@@ -316,15 +316,15 @@ input[type='number'] {
 }
 
 .cm-gutters {
-	@apply !bg-white dark:!bg-black !border-none;
+	@apply bg-white! border-none!;
 }
 
 .cm-editor {
-	@apply bg-white dark:bg-black;
+	@apply bg-white;
 }
 
 .tippy-box[data-theme~='dark'] {
-	@apply rounded-lg bg-gray-950 text-xs border border-gray-900 shadow-xl;
+	@apply rounded-lg bg-primary text-white text-xs border border-primary-700 shadow-xl;
 }
 
 .password {
@@ -332,12 +332,12 @@ input[type='number'] {
 }
 
 .codespan {
-	color: #eb5757;
+	color: #1e3a5f;
 	border-width: 0px;
 	padding: 3px 8px;
 	font-size: 0.8em;
 	font-weight: 600;
-	@apply rounded-md dark:bg-gray-800 bg-gray-100 mx-0.5;
+	@apply rounded-md dark:bg-primary-50 bg-primary-50 mx-0.5;
 }
 
 .svelte-flow {
@@ -354,7 +354,7 @@ input[type='number'] {
 }
 
 .bg-gray-950-90 {
-	background-color: rgba(var(--color-gray-950, #0d0d0d), 0.9);
+	background-color: rgba(255, 255, 255, 0.95);
 }
 
 .ProseMirror {
@@ -537,7 +537,7 @@ input[type='number'] {
 
 @media (prefers-color-scheme: dark) {
 	.ProseMirror p.is-editor-empty:first-child::before {
-		color: #757575;
+		color: #64748b;
 	}
 }
 
@@ -553,7 +553,7 @@ input[type='number'] {
 	font-size: 0.85rem;
 	padding: 0.25em 0.3em;
 
-	@apply dark:bg-gray-800 bg-gray-50;
+	@apply dark:bg-primary-50 bg-primary-50;
 }
 
 .tiptap pre {
@@ -562,16 +562,16 @@ input[type='number'] {
 	margin: 1.5rem 0;
 	padding: 0.75rem 1rem;
 
-	@apply dark:bg-gray-800 bg-gray-50;
+	@apply dark:bg-primary-50 bg-primary-50;
 }
 
 .tiptap p code {
-	color: #eb5757;
+	color: #1e3a5f;
 	border-width: 0px;
 	padding: 3px 8px;
 	font-size: 0.8em;
 	font-weight: 600;
-	@apply rounded-md dark:bg-gray-800 bg-gray-50 mx-0.5;
+	@apply rounded-md dark:bg-primary-50 bg-primary-50 mx-0.5;
 }
 
 /* Code styling */
@@ -628,28 +628,28 @@ input[type='number'] {
 
 /* Table styling for tiptap editors */
 .tiptap table {
-	@apply w-full text-sm text-left text-gray-500 dark:text-gray-400 max-w-full;
+	@apply w-full text-sm text-left text-primary dark:text-primary max-w-full;
 }
 
 .tiptap thead {
-	@apply text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 border-none;
+	@apply text-xs text-primary uppercase bg-primary-50 dark:bg-primary-50 dark:text-primary border-none;
 }
 
 .tiptap th,
 .tiptap td {
-	@apply px-3 py-1.5 border border-gray-100/30 dark:border-gray-850/30;
+	@apply px-3 py-1.5 border border-primary-100/30 dark:border-primary-200/30;
 }
 
 .tiptap th {
-	@apply cursor-pointer text-left text-xs text-gray-700 dark:text-gray-400 font-semibold uppercase bg-gray-50 dark:bg-gray-850;
+	@apply cursor-pointer text-left text-xs text-primary dark:text-primary font-semibold uppercase bg-primary-50 dark:bg-primary-50;
 }
 
 .tiptap td {
-	@apply text-gray-900 dark:text-white w-max;
+	@apply text-primary dark:text-primary w-max;
 }
 
 .tiptap tr {
-	@apply bg-white dark:bg-gray-900 dark:border-gray-850 text-xs;
+	@apply bg-white dark:bg-white dark:border-primary-100 text-xs;
 }
 
 .tippy-box[data-theme~='transparent'] {
@@ -677,7 +677,7 @@ input[type='number'] {
 	top: -1.05em;
 	left: -1px;
 	font-size: 13px;
-	background-color: rgb(250, 129, 0);
+	background-color: #1e3a5f;
 	user-select: none;
 	color: white;
 	padding-left: 2px;
@@ -686,13 +686,13 @@ input[type='number'] {
 }
 
 body {
-	background: #fff;
-	color: #000;
+	background: #ffffff;
+	color: #1e3a5f;
 }
 
 .dark body {
-	background: #171717;
-	color: #eee;
+	background: #f8fafc;
+	color: #1e3a5f;
 }
 
 /* Position the handle relative to each LI */

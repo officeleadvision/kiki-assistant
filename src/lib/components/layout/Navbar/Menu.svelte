@@ -279,7 +279,7 @@
 
 	<div slot="content">
 		<DropdownMenu.Content
-			class="w-full max-w-[200px] rounded-2xl px-1 py-1  border border-gray-100  dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg transition"
+			class="w-full max-w-[200px] rounded-2xl px-1 py-1  border border-gray-100 z-50 bg-white text-primary shadow-lg transition"
 			sideOffset={8}
 			side="bottom"
 			align="end"
@@ -315,7 +315,7 @@
 
 			{#if $mobile && ($user?.role === 'admin' || ($user?.permissions.chat?.controls ?? true))}
 				<DropdownMenu.Item
-					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 					id="chat-controls-button"
 					on:click={async () => {
 						await showControls.set(true);
@@ -330,7 +330,7 @@
 			{/if}
 
 			<DropdownMenu.Item
-				class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 				id="chat-overview-button"
 				on:click={async () => {
 					await showControls.set(true);
@@ -345,7 +345,7 @@
 
 			{#if ($artifactContents ?? []).length > 0}
 				<DropdownMenu.Item
-					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 					id="chat-overview-button"
 					on:click={async () => {
 						await showControls.set(true);
@@ -363,7 +363,7 @@
 
 			{#if !$temporaryChatEnabled && ($user?.role === 'admin' || ($user.permissions?.chat?.share ?? true))}
 				<DropdownMenu.Item
-					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 					id="chat-share-button"
 					on:click={() => {
 						shareHandler();
@@ -376,20 +376,20 @@
 
 			<DropdownMenu.Sub>
 				<DropdownMenu.SubTrigger
-					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 				>
 					<Download strokeWidth="1.5" />
 
 					<div class="flex items-center">{$i18n.t('Download')}</div>
 				</DropdownMenu.SubTrigger>
 				<DropdownMenu.SubContent
-					class="w-full rounded-2xl p-1 z-50 bg-white dark:bg-gray-850 dark:text-white border border-gray-100  dark:border-gray-800 shadow-lg max-h-52 overflow-y-auto scrollbar-hidden"
+					class="w-full rounded-2xl p-1 z-50 bg-white text-primary border border-gray-100 shadow-lg max-h-52 overflow-y-auto scrollbar-hidden"
 					transition={flyAndScale}
 					sideOffset={8}
 				>
 					{#if $user?.role === 'admin' || ($user.permissions?.chat?.export ?? true)}
 						<DropdownMenu.Item
-							class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+							class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 							on:click={() => {
 								downloadJSONExport();
 							}}
@@ -398,7 +398,7 @@
 						</DropdownMenu.Item>
 					{/if}
 					<DropdownMenu.Item
-						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 						on:click={() => {
 							downloadTxt();
 						}}
@@ -407,7 +407,7 @@
 					</DropdownMenu.Item>
 
 					<DropdownMenu.Item
-						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 						on:click={() => {
 							downloadPdf();
 						}}
@@ -418,7 +418,7 @@
 			</DropdownMenu.Sub>
 
 			<DropdownMenu.Item
-				class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+				class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 				id="chat-copy-button"
 				on:click={async () => {
 					const res = await copyToClipboard(await getChatAsText()).catch((e) => {
@@ -439,14 +439,14 @@
 
 				<DropdownMenu.Sub>
 					<DropdownMenu.SubTrigger
-						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl select-none w-full"
+						class="flex gap-2 items-center px-3 py-1.5 text-sm cursor-pointer hover:bg-primary/5 rounded-xl select-none w-full"
 					>
 						<Folder strokeWidth="1.5" />
 
 						<div class="flex items-center">{$i18n.t('Move')}</div>
 					</DropdownMenu.SubTrigger>
 					<DropdownMenu.SubContent
-						class="w-full rounded-2xl p-1 z-50 bg-white dark:bg-gray-850 dark:text-white border border-gray-100  dark:border-gray-800 shadow-lg max-h-52 overflow-y-auto scrollbar-hidden"
+						class="w-full rounded-2xl p-1 z-50 bg-white text-primary border border-gray-100 shadow-lg max-h-52 overflow-y-auto scrollbar-hidden"
 						transition={flyAndScale}
 						sideOffset={8}
 					>
@@ -466,7 +466,7 @@
 				</DropdownMenu.Sub>
 
 				<DropdownMenu.Item
-					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl"
+					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-primary/5 rounded-xl"
 					on:click={() => {
 						archiveChatHandler();
 					}}

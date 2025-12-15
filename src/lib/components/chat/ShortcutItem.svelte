@@ -87,7 +87,7 @@
 	<div class="flex-shrink-0 flex justify-end self-start h-full space-x-1 text-xs">
 		{#each shortcut.keys.filter((key) => !(key.toLowerCase() === 'delete' && shortcut.keys.includes('Backspace'))) as key}
 			<div
-				class="h-fit px-1 py-0.5 flex items-start justify-center rounded-sm border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-300"
+				class="h-fit px-1 py-0.5 flex items-start justify-center rounded-sm border border-black/10 capitalize text-gray-600 dark:border-white/10 dark:text-gray-500"
 			>
 				{formatKey(key)}
 			</div>

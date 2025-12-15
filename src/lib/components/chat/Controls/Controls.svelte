@@ -17,8 +17,8 @@
 	let showValves = false;
 </script>
 
-<div class=" dark:text-white">
-	<div class=" flex items-center justify-between dark:text-gray-100 mb-2">
+<div class=" text-primary">
+	<div class=" flex items-center justify-between text-primary mb-2">
 		<div class=" text-lg font-medium self-center font-primary">{$i18n.t('Chat Controls')}</div>
 		<button
 			class="self-center"
@@ -31,7 +31,7 @@
 	</div>
 
 	{#if $user?.role === 'admin' || ($user?.permissions.chat?.controls ?? true)}
-		<div class=" dark:text-gray-200 text-sm font-primary py-0.5 px-0.5">
+		<div class=" text-primary text-sm font-primary py-0.5 px-0.5">
 			{#if chatFiles.length > 0}
 				<Collapsible title={$i18n.t('Files')} open={true} buttonClassName="w-full">
 					<div class="flex flex-col gap-1 mt-1.5" slot="content">
@@ -60,7 +60,7 @@
 					</div>
 				</Collapsible>
 
-				<hr class="my-2 border-gray-50 dark:border-gray-700/10" />
+				<hr class="my-2 border-gray-100" />
 			{/if}
 
 			{#if $user?.role === 'admin' || ($user?.permissions.chat?.valves ?? true)}
@@ -70,7 +70,7 @@
 					</div>
 				</Collapsible>
 
-				<hr class="my-2 border-gray-50 dark:border-gray-700/10" />
+				<hr class="my-2 border-gray-100" />
 			{/if}
 
 			{#if $user?.role === 'admin' || ($user?.permissions.chat?.system_prompt ?? true)}
@@ -79,7 +79,7 @@
 						<textarea
 							bind:value={params.system}
 							class="w-full text-xs outline-hidden resize-vertical {$settings.highContrastMode
-								? 'border-2 border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 p-2.5'
+								? 'border-2 border-primary/20 rounded-lg bg-primary/5 p-2.5'
 								: 'py-1.5 bg-transparent'}"
 							rows="4"
 							placeholder={$i18n.t('Enter system prompt')}
@@ -87,7 +87,7 @@
 					</div>
 				</Collapsible>
 
-				<hr class="my-2 border-gray-50 dark:border-gray-700/10" />
+				<hr class="my-2 border-gray-100" />
 			{/if}
 
 			{#if $user?.role === 'admin' || ($user?.permissions.chat?.params ?? true)}

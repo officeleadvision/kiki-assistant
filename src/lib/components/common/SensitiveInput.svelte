@@ -19,7 +19,7 @@
 	<label class="sr-only" for={id}>{placeholder || $i18n.t('Password')}</label>
 	<input
 		{id}
-		class={`${inputClassName} ${show ? '' : 'password'} ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : ' outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-600'}`}
+		class={`${inputClassName} ${show ? '' : 'password'} ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : ' outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-600'}`}
 		{placeholder}
 		type={type === 'password' && !show ? 'password' : 'text'}
 		{value}

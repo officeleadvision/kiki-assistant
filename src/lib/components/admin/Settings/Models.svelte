@@ -263,7 +263,7 @@
 			<div class="flex justify-between items-center">
 				<div class="flex items-center md:self-center text-xl font-medium px-0.5 gap-2">
 					{$i18n.t('Models')}
-					<span class="text-lg font-medium text-gray-500 dark:text-gray-300"
+					<span class="text-lg font-medium text-gray-500 dark:text-gray-500"
 						>{filteredModels.length}</span
 					>
 				</div>
@@ -381,7 +381,7 @@
 							{#if shiftKey}
 								<Tooltip content={model?.meta?.hidden ? $i18n.t('Show') : $i18n.t('Hide')}>
 									<button
-										class="self-center w-fit text-sm px-2 py-2 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+										class="self-center w-fit text-sm px-2 py-2 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 										type="button"
 										on:click={() => {
 											hideModelHandler(model);
@@ -396,7 +396,7 @@
 								</Tooltip>
 							{:else}
 								<button
-									class="self-center w-fit text-sm px-2 py-2 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+									class="self-center w-fit text-sm px-2 py-2 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 									type="button"
 									on:click={() => {
 										selectedModelId = model.id;
@@ -436,7 +436,7 @@
 									onClose={() => {}}
 								>
 									<button
-										class="self-center w-fit text-sm p-1.5 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+										class="self-center w-fit text-sm p-1.5 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 										type="button"
 									>
 										<EllipsisHorizontal className="size-5" />

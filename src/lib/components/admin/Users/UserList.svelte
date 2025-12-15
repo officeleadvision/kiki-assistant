@@ -164,13 +164,13 @@
 							<span class="text-sm font-normal">{$i18n.t('available users')}</span></span
 						>
 					{:else}
-						<span class="text-lg font-medium text-gray-500 dark:text-gray-300"
+						<span class="text-lg font-medium text-gray-500 dark:text-gray-500"
 							>{total} of {$config?.license_metadata?.seats}
 							<span class="text-sm font-normal">{$i18n.t('available users')}</span></span
 						>
 					{/if}
 				{:else}
-					<span class="text-lg font-medium text-gray-500 dark:text-gray-300">{total}</span>
+					<span class="text-lg font-medium text-gray-500 dark:text-gray-500">{total}</span>
 				{/if}
 			</div>
 		</div>
@@ -489,7 +489,7 @@
 > 
 > Your support helps us stay independent and continue building great tools for everyone. 💛
 > 
-> - 👉 **[Click here to learn more about enterprise licensing](https://docs.openwebui.com/enterprise)**
+> - 👉 **[Click here to learn more about enterprise licensing](https://docs.Lead Me.com/enterprise)**
 > - 👉 *[Click here to sponsor the project on GitHub](https://github.com/sponsors/tjbck)*
 `}
 			/>

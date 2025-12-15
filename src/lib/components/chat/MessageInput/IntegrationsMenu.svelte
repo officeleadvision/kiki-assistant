@@ -182,7 +182,7 @@
 										<div class=" shrink-0">
 											<Tooltip content={$i18n.t('Valves')}>
 												<button
-													class="self-center w-fit text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition rounded-full"
+													class="self-center w-fit text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-500 transition rounded-full"
 													type="button"
 													on:click={(e) => {
 														e.stopPropagation();
@@ -375,7 +375,7 @@
 								<div class=" shrink-0">
 									<Tooltip content={$i18n.t('Valves')}>
 										<button
-											class="self-center w-fit text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition rounded-full"
+											class="self-center w-fit text-sm text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-500 transition rounded-full"
 											type="button"
 											on:click={(e) => {
 												e.stopPropagation();

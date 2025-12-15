@@ -152,7 +152,7 @@
 					{$i18n.t('Organize your users')}
 				</div>
 
-				<div class="mt-1 text-sm dark:text-gray-300">
+				<div class="mt-1 text-sm dark:text-gray-500">
 					{$i18n.t('Use groups to group your users and assign permissions.')}
 				</div>
 

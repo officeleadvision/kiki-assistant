@@ -101,7 +101,7 @@
 													class="relative inline-flex size-2 rounded-full {channelMembers[0]
 														?.is_active
 														? 'bg-green-500'
-														: 'bg-gray-300 dark:bg-gray-700'} border-[1.5px] border-white dark:border-gray-900"
+														: 'bg-gray-500 dark:bg-gray-700'} border-[1.5px] border-white dark:border-gray-900"
 												></span>
 											</span>
 										</div>

@@ -21,7 +21,7 @@
 			<select
 				class="dark:bg-gray-900 w-full py-1 text-sm rounded-lg bg-transparent {selectedModelId
 					? ''
-					: 'text-gray-500'} placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden"
+					: 'text-gray-500'} placeholder:text-gray-500 dark:placeholder:text-gray-700 outline-hidden"
 				bind:value={selectedModelId}
 				on:change={() => {
 					if (selectedModelId && !modelIds.includes(selectedModelId)) {

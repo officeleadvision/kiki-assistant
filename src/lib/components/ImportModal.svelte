@@ -63,7 +63,7 @@
 
 <Modal size="sm" bind:show>
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-2">
+		<div class=" flex justify-between text-primary px-5 pt-4 pb-2">
 			<div class=" text-lg font-medium self-center">{$i18n.t('Import')}</div>
 			<button
 				class="self-center"
@@ -89,7 +89,7 @@
 
 							<div class="flex-1">
 								<input
-									class="w-full text-sm bg-transparent disabled:text-gray-500 dark:disabled:text-gray-500 outline-hidden"
+									class="w-full text-sm bg-transparent disabled:text-primary/50 outline-hidden"
 									type="url"
 									bind:value={url}
 									placeholder={$i18n.t('Enter the URL to import')}
@@ -103,7 +103,7 @@
 
 					<div class="flex justify-end pt-3 text-sm font-medium">
 						<button
-							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full flex flex-row space-x-1 items-center {loading
+							class="px-3.5 py-1.5 text-sm font-medium bg-primary hover:bg-primary-700 text-white transition rounded-full flex flex-row space-x-1 items-center {loading
 								? ' cursor-not-allowed'
 								: ''}"
 							type="submit"

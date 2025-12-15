@@ -636,7 +636,7 @@
 					<div class="flex w-full">
 						<div class="flex-1 mr-2">
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-500 dark:bg-gray-850 outline-hidden"
 								placeholder={$i18n.t('Enter model tag (e.g. {{modelTag}})', {
 									modelTag: 'mistral:7b'
 								})}
@@ -703,7 +703,7 @@
 					<div class="mt-2 mb-1 text-xs text-gray-400 dark:text-gray-500">
 						{$i18n.t('To access the available model names for downloading,')}
 						<a
-							class=" text-gray-500 dark:text-gray-300 font-medium underline"
+							class=" text-gray-500 dark:text-gray-500 font-medium underline"
 							href="https://ollama.com/library"
 							target="_blank">{$i18n.t('click here.')}</a
 						>
@@ -804,7 +804,7 @@
 					<div class=" mb-2 text-sm font-medium">{$i18n.t('Delete a model')}</div>
 					<div class="flex w-full">
 						<div
-							class="flex-1 mr-2 pr-1.5 rounded-lg bg-gray-50 dark:text-gray-300 dark:bg-gray-850"
+							class="flex-1 mr-2 pr-1.5 rounded-lg bg-gray-50 dark:text-gray-500 dark:bg-gray-850"
 						>
 							<select
 								class="w-full py-2 px-4 text-sm outline-hidden bg-transparent"
@@ -850,7 +850,7 @@
 					<div class="flex w-full">
 						<div class="flex-1 mr-2 flex flex-col gap-2">
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-500 dark:bg-gray-850 outline-hidden"
 								placeholder={$i18n.t('Enter model tag (e.g. {{modelTag}})', {
 									modelTag: 'my-modelfile'
 								})}
@@ -980,7 +980,7 @@
 
 										<button
 											type="button"
-											class="w-full rounded-lg text-left py-2 px-4 bg-gray-50 dark:text-gray-300 dark:bg-gray-850"
+											class="w-full rounded-lg text-left py-2 px-4 bg-gray-50 dark:text-gray-500 dark:bg-gray-850"
 											on:click={() => {
 												modelUploadInputElement.click();
 											}}
@@ -995,7 +995,7 @@
 								{:else}
 									<div class="flex-1 {modelFileUrl !== '' ? 'mr-2' : ''}">
 										<input
-											class="w-full rounded-lg text-left py-2 px-4 bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden {modelFileUrl !==
+											class="w-full rounded-lg text-left py-2 px-4 bg-gray-50 dark:text-gray-500 dark:bg-gray-850 outline-hidden {modelFileUrl !==
 											''
 												? 'mr-2'
 												: ''}"
@@ -1082,7 +1082,7 @@
 						<div class=" mt-1 text-xs text-gray-400 dark:text-gray-500">
 							{$i18n.t('To access the GGUF models available for downloading,')}
 							<a
-								class=" text-gray-500 dark:text-gray-300 font-medium underline"
+								class=" text-gray-500 dark:text-gray-500 font-medium underline"
 								href="https://huggingface.co/models?search=gguf"
 								target="_blank">{$i18n.t('click here.')}</a
 							>

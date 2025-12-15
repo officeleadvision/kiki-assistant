@@ -77,7 +77,7 @@
 
 <Modal size="lg" bind:show>
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-1">
+		<div class=" flex justify-between text-primary px-5 pt-4 pb-1">
 			<div class=" text-lg font-medium self-center">{title}</div>
 			<button
 				class="self-center"
@@ -126,7 +126,7 @@
 					{#if query}
 						<div class="self-center pl-1.5 pr-1 translate-y-[0.5px] rounded-l-xl bg-transparent">
 							<button
-								class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+								class="p-0.5 rounded-full hover:bg-primary/10 transition"
 								on:click={() => {
 									query = '';
 									selectedIdx = 0;
@@ -202,7 +202,8 @@
 							{#each chatList as chat, idx (chat.id)}
 								{#if (idx === 0 || (idx > 0 && chat.time_range !== chatList[idx - 1].time_range)) && chat?.time_range}
 									<div
-										class="w-full text-xs text-gray-500 dark:text-gray-500 font-medium {idx === 0
+										class="w-full text-xs text-primary/60 font-semibold uppercase tracking-wide {idx ===
+										0
 											? ''
 											: 'pt-5'} pb-2 px-2"
 									>
@@ -243,7 +244,7 @@
 									</a>
 
 									<div class="basis-2/5 flex items-center justify-end">
-										<div class="hidden sm:flex text-gray-500 dark:text-gray-400 text-xs">
+										<div class="hidden sm:flex text-primary/50 text-xs">
 											{$i18n.t(
 												dayjs(chat?.updated_at * 1000).calendar(null, {
 													sameDay: '[Today]',
@@ -256,7 +257,7 @@
 											)}
 										</div>
 
-										<div class="flex justify-end pl-2.5 text-gray-600 dark:text-gray-300">
+										<div class="flex justify-end pl-2.5 text-gray-600 dark:text-gray-500">
 											{#if unarchiveHandler}
 												<Tooltip content={$i18n.t('Unarchive Chat')}>
 													<button
@@ -350,7 +351,7 @@
 							<div class="text-left text-sm w-full mb-3 max-h-[22rem] overflow-y-scroll">
 								<div class="relative overflow-x-auto">
 									<table
-										class="w-full text-sm text-left text-gray-600 dark:text-gray-400 table-auto"
+										class="w-full text-sm text-left text-primary/70 table-auto"
 									>
 										<thead
 											class="text-xs text-gray-700 uppercase bg-transparent dark:text-gray-200 border-b-1 border-gray-50 dark:border-gray-850/30"
@@ -367,7 +368,7 @@
 											{#each chats as chat, idx}
 												<tr
 													class="bg-transparent {idx !== chats.length - 1 &&
-														'border-b'} dark:bg-gray-900 border-gray-50 dark:border-gray-850/30 text-xs"
+														'border-b'} bg-white border-gray-100 text-xs"
 												>
 													<td class="px-3 py-1 w-2/3">
 														<a href="/c/{chat.id}" target="_blank">
@@ -388,7 +389,7 @@
 															{#if unarchiveHandler}
 																<Tooltip content={$i18n.t('Unarchive Chat')}>
 																	<button
-																		class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+																		class="self-center w-fit text-sm px-2 py-2 hover:bg-primary/5 rounded-xl"
 																		on:click={async () => {
 																			unarchiveHandler(chat.id);
 																		}}
@@ -413,7 +414,7 @@
 
 															<Tooltip content={$i18n.t('Delete Chat')}>
 																<button
-																	class="self-center w-fit text-sm px-2 py-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+																	class="self-center w-fit text-sm px-2 py-2 hover:bg-primary/5 rounded-xl"
 																	on:click={async () => {
 																		deleteHandler(chat.id);
 																	}}

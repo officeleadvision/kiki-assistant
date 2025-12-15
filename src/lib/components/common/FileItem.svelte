@@ -13,8 +13,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let className = 'w-60';
-	export let colorClassName =
-		'bg-white dark:bg-gray-850 border border-gray-50/30 dark:border-gray-800/30';
+	export let colorClassName = 'bg-white border border-gray-100';
 	export let url: string | null = null;
 
 	export let dismissible = false;
@@ -72,7 +71,7 @@
 >
 	{#if !small}
 		<div
-			class="size-10 shrink-0 flex justify-center items-center bg-black/20 dark:bg-white/10 text-white rounded-xl"
+			class="size-10 shrink-0 flex justify-center items-center bg-primary/20 text-white rounded-xl"
 		>
 			{#if !loading}
 				<svg
@@ -136,7 +135,7 @@
 
 			<div
 				class=" flex justify-between text-xs line-clamp-1 {($settings?.highContrastMode ?? false)
-					? 'text-gray-800 dark:text-gray-100'
+					? 'text-primary'
 					: 'text-gray-500'}"
 			>
 				{#if type === 'file'}
@@ -187,7 +186,7 @@
 			</button>
 
 			<!-- <button
-				class=" p-1 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-full group-hover:visible invisible transition"
+				class=" p-1 text-primary/70 hover:text-primary hover:bg-primary/5 rounded-full group-hover:visible invisible transition"
 				type="button"
 				on:click={() => {
 				}}

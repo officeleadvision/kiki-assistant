@@ -57,7 +57,7 @@
 						<div class="text-xs flex items-center justify-between mb-2">
 							<div class="font-medium">{$i18n.t('Actions')}</div>
 
-							<div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+							<div class="flex items-center gap-2 text-gray-700 dark:text-gray-500">
 								<button
 									type="button"
 									on:click={() => {

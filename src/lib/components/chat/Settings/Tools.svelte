@@ -111,12 +111,12 @@
 							{$i18n.t('Connect to your own OpenAPI compatible external tool servers.')}
 							<br />
 							{$i18n.t(
-								'CORS must be properly configured by the provider to allow requests from Open WebUI.'
+								'CORS must be properly configured by the provider to allow requests from Lead Me'
 							)}
 						</div>
 					</div>
 
-					<div class=" text-xs text-gray-600 dark:text-gray-300 mb-2">
+					<div class=" text-xs text-gray-600 dark:text-gray-500 mb-2">
 						<a
 							class="underline"
 							href="https://github.com/open-webui/openapi-servers"

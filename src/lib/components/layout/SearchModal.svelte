@@ -255,7 +255,7 @@
 </script>
 
 <Modal size="xl" bind:show>
-	<div class="py-3 dark:text-gray-300 text-gray-700">
+	<div class="py-3 text-primary">
 		<div class="px-4 pb-1.5">
 			<SearchInput
 				bind:value={query}
@@ -297,15 +297,15 @@
 			<div
 				class="flex flex-col overflow-y-auto h-96 md:h-[40rem] max-h-full scrollbar-hidden w-full flex-1 pr-2"
 			>
-				<div class="w-full text-xs text-gray-500 dark:text-gray-500 font-medium pb-2 px-2">
+				<div class="w-full text-xs text-primary/60 font-semibold uppercase tracking-wide pb-2 px-2">
 					{$i18n.t('Actions')}
 				</div>
 
 				{#each actions as action, idx (action.label)}
 					<button
-						class=" w-full flex items-center rounded-xl text-sm py-2 px-3 hover:bg-gray-50 dark:hover:bg-gray-850 {selectedIdx ===
+						class=" w-full flex items-center rounded-xl text-sm py-2 px-3 hover:bg-primary/5 {selectedIdx ===
 						idx
-							? 'bg-gray-50 dark:bg-gray-850'
+							? 'bg-primary/5'
 							: ''}"
 						data-arrow-selected={selectedIdx === idx ? 'true' : undefined}
 						dragabble="false"
@@ -331,7 +331,7 @@
 					<hr class="border-gray-50 dark:border-gray-850/30 my-3" />
 
 					{#if chatList.length === 0}
-						<div class="text-xs text-gray-500 dark:text-gray-400 text-center px-5 py-4">
+						<div class="text-xs text-primary/50 text-center px-5 py-4">
 							{$i18n.t('No results found')}
 						</div>
 					{/if}
@@ -366,9 +366,9 @@
 						{/if}
 
 						<a
-							class=" w-full flex justify-between items-center rounded-xl text-sm py-2 px-3 hover:bg-gray-50 dark:hover:bg-gray-850 {selectedIdx ===
+							class=" w-full flex justify-between items-center rounded-xl text-sm py-2 px-3 hover:bg-primary/5 {selectedIdx ===
 							idx + actions.length
-								? 'bg-gray-50 dark:bg-gray-850'
+								? 'bg-primary/5'
 								: ''}"
 							href="/c/{chat.id}"
 							draggable="false"
@@ -388,7 +388,7 @@
 								</div>
 							</div>
 
-							<div class=" pl-3 shrink-0 text-gray-500 dark:text-gray-400 text-xs">
+							<div class=" pl-3 shrink-0 text-primary/50 text-xs">
 								{$i18n.t(
 									dayjs(chat?.updated_at * 1000).calendar(null, {
 										sameDay: '[Today]',
@@ -428,9 +428,7 @@
 				class="hidden md:flex md:flex-1 w-full overflow-y-auto h-96 md:h-[40rem] scrollbar-hidden"
 			>
 				{#if messages === null}
-					<div
-						class="w-full h-full flex justify-center items-center text-gray-500 dark:text-gray-400 text-sm"
-					>
+					<div class="w-full h-full flex justify-center items-center text-primary/50 text-sm">
 						{$i18n.t('Select a conversation to preview')}
 					</div>
 				{:else}

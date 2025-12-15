@@ -23,7 +23,7 @@
 
 <Modal bind:show size="md">
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-0.5">
+		<div class=" flex justify-between dark:text-gray-500 px-5 pt-4 pb-0.5">
 			<div class=" text-lg font-medium self-center">{$i18n.t('Available Tools')}</div>
 			<button
 				class="self-center"
@@ -37,13 +37,13 @@
 
 		{#if selectedTools.length > 0}
 			{#if $toolServers.length > 0}
-				<div class=" flex justify-between dark:text-gray-300 px-5 pb-1">
+				<div class=" flex justify-between dark:text-gray-500 px-5 pb-1">
 					<div class=" text-base font-medium self-center">{$i18n.t('Tools')}</div>
 				</div>
 			{/if}
 
 			<div class="px-5 pb-3 w-full flex flex-col justify-center">
-				<div class=" text-sm dark:text-gray-300 mb-1">
+				<div class=" text-sm dark:text-gray-500 mb-1">
 					{#each selectedTools as tool}
 						<Collapsible buttonClassName="w-full mb-0.5">
 							<div class="truncate">
@@ -68,19 +68,19 @@
 		{/if}
 
 		{#if $toolServers.length > 0}
-			<div class=" flex justify-between dark:text-gray-300 px-5 pb-0.5">
+			<div class=" flex justify-between dark:text-gray-500 px-5 pb-0.5">
 				<div class=" text-base font-medium self-center">{$i18n.t('Tool Servers')}</div>
 			</div>
 
 			<div class="px-5 pb-5 w-full flex flex-col justify-center">
-				<div class=" text-xs text-gray-600 dark:text-gray-300 mb-2">
+				<div class=" text-xs text-gray-600 dark:text-gray-500 mb-2">
 					{$i18n.t('Open WebUI can use tools provided by any OpenAPI server.')} <br /><a
 						class="underline"
 						href="https://github.com/open-webui/openapi-servers"
 						target="_blank">{$i18n.t('Learn more about OpenAPI tool servers.')}</a
 					>
 				</div>
-				<div class=" text-sm dark:text-gray-300 mb-1">
+				<div class=" text-sm dark:text-gray-500 mb-1">
 					{#each $toolServers as toolServer}
 						<Collapsible buttonClassName="w-full" chevron>
 							<div>

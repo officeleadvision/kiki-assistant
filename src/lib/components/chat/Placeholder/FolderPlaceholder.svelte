@@ -72,7 +72,7 @@
 			<button
 				class="min-w-fit p-1.5 {selectedTab === 'knowledge'
 					? ''
-					: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+					: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
 				type="button"
 				on:click={() => {
 					selectedTab = 'knowledge';
@@ -82,7 +82,7 @@
 			<button
 				class="min-w-fit p-1.5 {selectedTab === 'chats'
 					? ''
-					: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+					: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
 				type="button"
 				on:click={() => {
 					selectedTab = 'chats';

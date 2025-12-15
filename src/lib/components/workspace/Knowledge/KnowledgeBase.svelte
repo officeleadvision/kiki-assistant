@@ -774,7 +774,7 @@
 								{#if !showSidepanel}
 									<div class="-translate-x-2">
 										<button
-											class="w-full text-left text-sm p-1.5 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
+											class="w-full text-left text-sm p-1.5 rounded-lg dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
 											on:click={() => {
 												pane.expand();
 											}}
@@ -796,7 +796,7 @@
 
 								<div>
 									<button
-										class="self-center w-fit text-sm py-1 px-2.5 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+										class="self-center w-fit text-sm py-1 px-2.5 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
 										disabled={isSaving}
 										on:click={() => {
 											updateFileContentHandler();
@@ -845,7 +845,7 @@
 							<div class="shrink-0 mt-1 mb-2 flex items-center">
 								<div class="mr-2">
 									<button
-										class="w-full text-left text-sm p-1.5 rounded-lg dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
+										class="w-full text-left text-sm p-1.5 rounded-lg dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-gray-850"
 										on:click={() => {
 											selectedFileId = null;
 										}}
@@ -859,7 +859,7 @@
 
 								<div>
 									<button
-										class="self-center w-fit text-sm py-1 px-2.5 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+										class="self-center w-fit text-sm py-1 px-2.5 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
 										disabled={isSaving}
 										on:click={() => {
 											updateFileContentHandler();

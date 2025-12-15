@@ -25,10 +25,10 @@
 	let mounted = false;
 
 	const classNames: Record<string, string> = {
-		info: 'bg-blue-500/20 text-blue-700 dark:text-blue-200 ',
-		success: 'bg-green-500/20 text-green-700 dark:text-green-200',
-		warning: 'bg-yellow-500/20 text-yellow-700 dark:text-yellow-200',
-		error: 'bg-red-500/20 text-red-700 dark:text-red-200'
+		info: 'bg-blue-500/20 text-blue-700',
+		success: 'bg-green-500/20 text-green-700',
+		warning: 'bg-yellow-500/20 text-yellow-700',
+		error: 'bg-red-500/20 text-red-700'
 	};
 
 	const dismiss = (id) => {
@@ -71,7 +71,7 @@
 					{#if banner.url}
 						<div class="flex md:hidden group w-fit md:items-center">
 							<a
-								class="text-gray-700 dark:text-white text-xs font-semibold underline"
+								class="text-primary text-xs font-semibold underline"
 								href="{WEBUI_BASE_URL}/assets/files/whitepaper.pdf"
 								target="_blank"
 							>
@@ -99,22 +99,18 @@
 						</div>
 					{/if}
 				</div>
-				<div class="flex-1 text-xs text-gray-700 dark:text-white max-h-60 overflow-y-auto">
+				<div class="flex-1 text-xs text-primary max-h-60 overflow-y-auto">
 					{@html marked.parse(DOMPurify.sanitize((banner?.content ?? '').replace(/\n/g, '<br>')))}
 				</div>
 			</div>
 
 			{#if banner.url}
 				<div class="hidden md:flex group w-fit md:items-center">
-					<a
-						class="text-gray-700 dark:text-white text-xs font-semibold underline"
-						href="/"
-						target="_blank"
-					>
+					<a class="text-primary text-xs font-semibold underline" href="/" target="_blank">
 						{$i18n.t('Learn More')}
 					</a>
 
-					<div class=" ml-1 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-white">
+					<div class=" ml-1 text-primary/50 group-hover:text-primary">
 						<!--  -->
 						<svg
 							aria-hidden="true"
@@ -138,7 +134,7 @@
 					on:click={() => {
 						dismiss(banner.id);
 					}}
-					class="  -mt-1 -mb-2 -translate-y-[1px] ml-1.5 mr-1 text-gray-400 dark:hover:text-white"
+					class="  -mt-1 -mb-2 -translate-y-[1px] ml-1.5 mr-1 text-primary/50 hover:text-primary"
 					>&times;</button
 				>
 			</div>

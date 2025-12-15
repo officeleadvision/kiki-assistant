@@ -261,7 +261,7 @@
 
 									<button
 										class="min-w-fit {selectedModelIdx == modelIdx
-											? ' dark:border-gray-300 '
+											? ' dark:border-gray-500 '
 											: ' opacity-35 border-transparent'} pb-1.5 px-2.5 transition border-b-2"
 										on:click={async () => {
 											if (selectedModelIdx != modelIdx) {

@@ -31,8 +31,8 @@
 		const _chat = chat.chat;
 		console.log('share', _chat);
 
-		toast.success($i18n.t('Redirecting you to Open WebUI Community'));
-		const url = 'https://openwebui.com';
+		toast.success($i18n.t('Redirecting you to Lead Me by Lead Vision Ltd.'));
+		const url = 'https://Lead Me.com';
 		// const url = 'http://localhost:5173';
 
 		const tab = await window.open(`${url}/chats/upload`, '_blank');
@@ -83,7 +83,7 @@
 
 <Modal bind:show size="md">
 	<div>
-		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-0.5">
+		<div class=" flex justify-between dark:text-gray-500 px-5 pt-4 pb-0.5">
 			<div class=" text-lg font-medium self-center">{$i18n.t('Share Chat')}</div>
 			<button
 				class="self-center"
@@ -97,7 +97,7 @@
 
 		{#if chat}
 			<div class="px-5 pt-4 pb-5 w-full flex flex-col justify-center">
-				<div class=" text-sm dark:text-gray-300 mb-1">
+				<div class=" text-sm dark:text-gray-500 mb-1">
 					{#if chat.share_id}
 						<a href="/s/{chat.share_id}" target="_blank"
 							>{$i18n.t('You have shared this chat')}
@@ -135,7 +135,7 @@
 										show = false;
 									}}
 								>
-									{$i18n.t('Share to Open WebUI Community')}
+									{$i18n.t('Share to Lead Me by Lead Vision Ltd.')}
 								</button>
 							{/if}
 

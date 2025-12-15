@@ -64,7 +64,7 @@
 	}
 </script>
 
-<div class="mb-1 flex gap-1 text-xs font-medium items-center text-gray-600 dark:text-gray-400">
+<div class="mb-1 flex gap-1 text-xs font-semibold items-center text-primary/70">
 	{#if filteredPrompts.length > 0}
 		<Bolt />
 		{$i18n.t('Suggested')}
@@ -74,7 +74,7 @@
 		<div
 			class="flex w-full {$settings?.landingPageMode === 'chat'
 				? ' -mt-1'
-				: 'text-center items-center justify-center'}  self-start text-gray-600 dark:text-gray-400"
+				: 'text-center items-center justify-center'}  self-start text-primary/50"
 		>
 			{$WEBUI_NAME} ‧ v{WEBUI_VERSION}
 		</div>
@@ -89,28 +89,28 @@
 				<button
 					role="listitem"
 					class="waterfall flex flex-col flex-1 shrink-0 w-full justify-between
-				       px-3 py-2 rounded-xl bg-transparent hover:bg-black/5
-				       dark:hover:bg-white/5 transition group"
+				       px-3 py-2.5 rounded-xl bg-primary/5 hover:bg-primary/10
+				       border border-primary/10 hover:border-primary/20 transition group"
 					style="animation-delay: {idx * 60}ms"
 					on:click={() => onSelect({ type: 'prompt', data: prompt.content })}
 				>
 					<div class="flex flex-col text-left">
 						{#if prompt.title && prompt.title[0] !== ''}
 							<div
-								class="font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
+								class="font-medium text-primary group-hover:text-primary transition line-clamp-1"
 							>
 								{prompt.title[0]}
 							</div>
-							<div class="text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1">
+							<div class="text-xs text-primary/60 font-normal line-clamp-1">
 								{prompt.title[1]}
 							</div>
 						{:else}
 							<div
-								class="font-medium dark:text-gray-300 dark:group-hover:text-gray-200 transition line-clamp-1"
+								class="font-medium text-primary group-hover:text-primary transition line-clamp-1"
 							>
 								{prompt.content}
 							</div>
-							<div class="text-xs text-gray-600 dark:text-gray-400 font-normal line-clamp-1">
+							<div class="text-xs text-primary/60 font-normal line-clamp-1">
 								{$i18n.t('Prompt')}
 							</div>
 						{/if}

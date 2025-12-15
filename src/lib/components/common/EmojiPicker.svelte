@@ -117,7 +117,7 @@
 		<slot />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content
-		class="max-w-full w-80 border border-gray-100  dark:border-gray-800   bg-white dark:bg-gray-850  rounded-3xl z-9999 shadow-lg dark:text-white"
+		class="max-w-full w-80 border border-gray-100 bg-white rounded-3xl z-9999 shadow-lg text-primary"
 		sideOffset={8}
 		{side}
 		{align}
@@ -134,7 +134,7 @@
 		<!-- Virtualized Emoji List -->
 		<div class="w-full flex justify-start h-96 overflow-y-auto px-3 pb-3 text-sm">
 			{#if emojiRows.length === 0}
-				<div class="text-center text-xs text-gray-500 dark:text-gray-400">
+				<div class="text-center text-xs text-primary/50">
 					{$i18n.t('No results')}
 				</div>
 			{:else}
@@ -143,7 +143,7 @@
 						<div class="w-full">
 							{#if item.length === 1 && item[0].type === 'group'}
 								<!-- Render group header -->
-								<div class="text-xs font-medium mb-2 text-gray-500 dark:text-gray-400">
+								<div class="text-xs font-medium mb-2 text-primary/50">
 									{item[0].label}
 								</div>
 							{:else}
@@ -155,7 +155,7 @@
 											placement="top"
 										>
 											<button
-												class="p-1.5 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+												class="p-1.5 rounded-lg cursor-pointer hover:bg-primary/10 transition"
 												on:click={() => selectEmoji(emojiItem)}
 											>
 												<img

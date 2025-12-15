@@ -19,13 +19,11 @@
 </script>
 
 <div class="fixed w-full h-full flex z-999">
-	<div
-		class="absolute w-full h-full backdrop-blur-lg bg-white/10 dark:bg-gray-900/50 flex justify-center"
-	>
+	<div class="absolute w-full h-full backdrop-blur-lg bg-white/90 flex justify-center">
 		<div class="m-auto pb-10 flex flex-col justify-center">
 			<div class="max-w-md">
 				<div
-					class="text-center dark:text-white text-2xl font-medium z-50"
+					class="text-center text-primary text-2xl font-medium z-50"
 					style="white-space: pre-wrap;"
 				>
 					{#if ($config?.ui?.pending_user_overlay_title ?? '').trim() !== ''}
@@ -61,7 +59,7 @@
 
 				<div class=" mt-6 mx-auto relative group w-fit">
 					<button
-						class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 text-gray-700 transition font-medium text-sm"
+						class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 hover:bg-primary/5 text-primary transition font-medium text-sm"
 						on:click={async () => {
 							location.href = '/';
 						}}

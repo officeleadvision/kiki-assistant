@@ -208,7 +208,7 @@
 								type="text"
 								bind:value={STTLanguage}
 								placeholder={$i18n.t('e.g. en')}
-								class=" text-sm text-right bg-transparent dark:text-gray-300 outline-hidden"
+								class=" text-sm text-right bg-transparent dark:text-gray-500 outline-hidden"
 							/>
 						</Tooltip>
 					</div>
@@ -299,7 +299,7 @@
 						min="0"
 						step="0.01"
 						bind:value={playbackRate}
-						class=" text-sm text-right bg-transparent dark:text-gray-300 outline-hidden"
+						class=" text-sm text-right bg-transparent dark:text-gray-500 outline-hidden"
 					/>
 					x
 				</div>
@@ -316,7 +316,7 @@
 						<div class="flex-1">
 							<input
 								list="voice-list"
-								class="w-full text-sm bg-transparent dark:text-gray-300 outline-hidden"
+								class="w-full text-sm bg-transparent dark:text-gray-500 outline-hidden"
 								bind:value={voice}
 								placeholder={$i18n.t('Select a voice')}
 							/>
@@ -353,7 +353,7 @@
 				<div class="flex w-full">
 					<div class="flex-1">
 						<select
-							class="dark:bg-gray-900 w-full text-sm bg-transparent dark:text-gray-300 outline-hidden"
+							class="dark:bg-gray-900 w-full text-sm bg-transparent dark:text-gray-500 outline-hidden"
 							bind:value={voice}
 						>
 							<option value="" selected={voice !== ''}>{$i18n.t('Default')}</option>
@@ -384,7 +384,7 @@
 					<div class="flex-1">
 						<input
 							list="voice-list"
-							class="w-full text-sm bg-transparent dark:text-gray-300 outline-hidden"
+							class="w-full text-sm bg-transparent dark:text-gray-500 outline-hidden"
 							bind:value={voice}
 							placeholder={$i18n.t('Select a voice')}
 						/>

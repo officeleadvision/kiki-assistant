@@ -141,7 +141,7 @@
 
 							<div class="flex-1">
 								<input
-									class="w-full text-sm dark:text-gray-300 bg-transparent outline-hidden"
+									class="w-full text-sm text-primary bg-transparent outline-hidden"
 									type="text"
 									bind:value={name}
 									required
@@ -155,7 +155,7 @@
 
 							<div class="flex-1">
 								<Textarea
-									className="w-full text-sm dark:text-gray-300 bg-transparent outline-hidden"
+									className="w-full text-sm dark:text-gray-500 bg-transparent outline-hidden"
 									minSize={60}
 									bind:value={bio}
 									placeholder={$i18n.t('Share your background and interests')}
@@ -168,7 +168,7 @@
 
 							<div class="flex-1">
 								<select
-									class="dark:bg-gray-900 w-full text-sm dark:text-gray-300 bg-transparent outline-hidden"
+									class="bg-primary/5 w-full text-sm text-primary outline-hidden rounded-lg"
 									bind:value={_gender}
 									on:change={(e) => {
 										console.log(_gender);
@@ -190,7 +190,7 @@
 
 							{#if _gender === 'custom'}
 								<input
-									class="w-full text-sm dark:text-gray-300 bg-transparent outline-hidden mt-1"
+									class="w-full text-sm dark:text-gray-500 bg-transparent outline-hidden mt-1"
 									type="text"
 									required
 									placeholder={$i18n.t('Enter your gender')}
@@ -204,7 +204,7 @@
 
 							<div class="flex-1">
 								<input
-									class="w-full text-sm dark:text-gray-300 dark:placeholder:text-gray-300 bg-transparent outline-hidden"
+									class="w-full text-sm dark:text-gray-500 dark:placeholder:text-gray-500 bg-transparent outline-hidden"
 									type="date"
 									bind:value={dateOfBirth}
 									required
@@ -234,7 +234,7 @@
 			</div>
 		{/if}
 
-		<hr class="border-gray-50 dark:border-gray-850/30 my-4" />
+		<hr class="border-gray-100 my-4" />
 
 		{#if $config?.features.enable_login_form}
 			<div class="mt-2">
@@ -266,7 +266,7 @@
 								<SensitiveInput value={localStorage.token} readOnly={true} />
 
 								<button
-									class="ml-1.5 px-1.5 py-1 dark:hover:bg-gray-850 transition rounded-lg"
+									class="ml-1.5 px-1.5 py-1 hover:bg-primary/10 transition rounded-lg"
 									on:click={() => {
 										copyToClipboard(localStorage.token);
 										JWTTokenCopied = true;
@@ -324,7 +324,7 @@
 									<SensitiveInput value={APIKey} readOnly={true} />
 
 									<button
-										class="ml-1.5 px-1.5 py-1 dark:hover:bg-gray-850 transition rounded-lg"
+										class="ml-1.5 px-1.5 py-1 hover:bg-primary/10 transition rounded-lg"
 										on:click={() => {
 											copyToClipboard(APIKey);
 											APIKeyCopied = true;
@@ -392,7 +392,7 @@
 									</Tooltip>
 								{:else}
 									<button
-										class="flex gap-1.5 items-center font-medium px-3.5 py-1.5 rounded-lg bg-gray-100/70 hover:bg-gray-100 dark:bg-gray-850 dark:hover:bg-gray-850 transition"
+										class="flex gap-1.5 items-center font-medium px-3.5 py-1.5 rounded-lg bg-primary/5 hover:bg-primary/10 transition"
 										on:click={() => {
 											createAPIKeyHandler();
 										}}
@@ -412,7 +412,7 @@
 
 	<div class="flex justify-end pt-3 text-sm font-medium">
 		<button
-			class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full"
+			class="px-3.5 py-1.5 text-sm font-medium bg-primary hover:bg-primary-700 text-white transition rounded-full"
 			on:click={async () => {
 				const res = await submitHandler();
 

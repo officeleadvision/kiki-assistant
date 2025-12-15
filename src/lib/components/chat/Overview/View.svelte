@@ -110,7 +110,7 @@
 					source: parentId,
 					target: pos.id,
 					selectable: false,
-					class: ' dark:fill-gray-300 fill-gray-300',
+					class: ' dark:fill-gray-500 fill-gray-500',
 					type: 'smoothstep',
 					animated: history.currentId === id || recurseCheckChild(id, history.currentId)
 				});

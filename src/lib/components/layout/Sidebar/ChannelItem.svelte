@@ -54,12 +54,12 @@
 <div
 	id="sidebar-channel-item"
 	bind:this={itemElement}
-	class=" w-full {className} rounded-xl flex relative group hover:bg-gray-100 dark:hover:bg-gray-900 {$page
-		.url.pathname === `/channels/${channel.id}`
-		? 'bg-gray-100 dark:bg-gray-900 selected'
+	class=" w-full {className} rounded-xl flex relative group hover:bg-primary/5 {$page.url
+		.pathname === `/channels/${channel.id}`
+		? 'bg-primary/10 selected'
 		: ''} {channel?.type === 'dm' ? 'px-1 py-[3px]' : 'p-1'}  {channel?.unread_count > 0
-		? 'font-medium dark:text-white text-black'
-		: ' dark:text-gray-400 text-gray-600'} cursor-pointer select-none"
+		? 'font-medium text-primary'
+		: ' text-primary/70'} cursor-pointer select-none"
 >
 	<a
 		class=" w-full flex justify-between"
@@ -94,8 +94,7 @@
 								<img
 									src={`${WEBUI_API_BASE_URL}/users/${u.id}/profile/image`}
 									alt={u.name}
-									class=" size-5.5 rounded-full border-2 border-white dark:border-gray-900 {index ===
-									1
+									class=" size-5.5 rounded-full border-2 border-white {index === 1
 										? '-ml-2.5'
 										: ''}"
 								/>
@@ -112,7 +111,7 @@
 										<span
 											class="relative inline-flex size-2 rounded-full {channelMembers[0]?.is_active
 												? 'bg-green-500'
-												: 'bg-gray-300 dark:bg-gray-700'} border-[1.5px] border-white dark:border-gray-900"
+												: 'bg-gray-500 dark:bg-gray-700'} border-[1.5px] border-white dark:border-gray-900"
 										></span>
 									</span>
 								</div>
@@ -170,9 +169,7 @@
 
 		<div class="flex items-center">
 			{#if channel?.unread_count > 0}
-				<div
-					class="text-xs py-[1px] px-2 rounded-xl bg-gray-100 text-black dark:bg-gray-800 dark:text-white font-medium"
-				>
+				<div class="text-xs py-[1px] px-2 rounded-xl bg-primary/10 text-primary font-medium">
 					{new Intl.NumberFormat($i18n.locale, {
 						notation: 'compact',
 						compactDisplay: 'short'
@@ -184,11 +181,11 @@
 
 	{#if ['dm'].includes(channel?.type)}
 		<div
-			class="ml-0.5 mr-1 invisible group-hover:visible self-center flex items-center dark:text-gray-300"
+			class="ml-0.5 mr-1 invisible group-hover:visible self-center flex items-center text-primary/70"
 		>
 			<button
 				type="button"
-				class="p-0.5 dark:hover:bg-gray-850 rounded-lg touch-auto"
+				class="p-0.5 hover:bg-primary/10 rounded-lg touch-auto"
 				on:click={async (e) => {
 					e.stopImmediatePropagation();
 					e.stopPropagation();
@@ -211,11 +208,11 @@
 		</div>
 	{:else if $user?.role === 'admin' || channel.user_id === $user?.id}
 		<div
-			class="ml-0.5 mr-1 invisible group-hover:visible self-center flex items-center dark:text-gray-300"
+			class="ml-0.5 mr-1 invisible group-hover:visible self-center flex items-center text-primary/70"
 		>
 			<button
 				type="button"
-				class="p-0.5 dark:hover:bg-gray-850 rounded-lg touch-auto"
+				class="p-0.5 hover:bg-primary/10 rounded-lg touch-auto"
 				on:click={(e) => {
 					e.stopImmediatePropagation();
 					e.stopPropagation();

@@ -93,12 +93,12 @@
 }
 
 .rose-pine
-	.w-full.rounded.p-4.text-sm.dark\:text-gray-300.dark\:bg-gray-800.outline-none.resize-none {
+	.w-full.rounded.p-4.text-sm.dark\:text-gray-500.dark\:bg-gray-800.outline-none.resize-none {
 	background-color: #524f67;
 }
 
 .rose-pine
-	.w-full.rounded.py-2.px-4.text-sm.dark\:text-gray-300.dark\:bg-gray-800.outline-none.svelte-1vx7r9s {
+	.w-full.rounded.py-2.px-4.text-sm.dark\:text-gray-500.dark\:bg-gray-800.outline-none.svelte-1vx7r9s {
 	background-color: #524f67;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .rose-pine
-	.px-2\.5.py-2\.5.min-w-fit.rounded-lg.flex-1.md\:flex-none.flex.text-right.transition.hover\:bg-gray-300.dark\:hover\:bg-gray-800:hover {
+	.px-2\.5.py-2\.5.min-w-fit.rounded-lg.flex-1.md\:flex-none.flex.text-right.transition.hover\:bg-gray-500.dark\:hover\:bg-gray-800:hover {
 	background-color: #524f67;
 }
 

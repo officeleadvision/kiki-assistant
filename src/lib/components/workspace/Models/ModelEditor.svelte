@@ -805,7 +805,7 @@
 						</button>
 					</div>
 
-					<div class="my-2 text-gray-300 dark:text-gray-700 pb-20">
+					<div class="my-2 text-gray-500 dark:text-gray-700 pb-20">
 						<div class="flex w-full justify-between mb-2">
 							<div class=" self-center text-sm font-medium">{$i18n.t('JSON Preview')}</div>
 

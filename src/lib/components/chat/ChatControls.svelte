@@ -166,7 +166,7 @@
 			>
 				{#if $showCallOverlay}
 					<div
-						class=" h-full max-h-[100dvh] bg-white text-gray-700 dark:bg-black dark:text-gray-300 flex justify-center"
+						class=" h-full max-h-[100dvh] bg-white text-gray-700 dark:bg-black dark:text-gray-500 flex justify-center"
 					>
 						<CallOverlay
 							bind:files

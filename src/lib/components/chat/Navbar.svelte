@@ -82,18 +82,18 @@
 			id="navbar-bg-gradient-to-b"
 			class="{chat?.id
 				? 'visible'
-				: 'invisible'} bg-linear-to-b via-40% to-97% from-white/90 via-white/50 to-transparent dark:from-gray-900/90 dark:via-gray-900/50 dark:to-transparent pointer-events-none absolute inset-0 -bottom-10 z-[-1]"
+				: 'invisible'} bg-linear-to-b via-40% to-97% from-white/90 via-white/50 to-transparent pointer-events-none absolute inset-0 -bottom-10 z-[-1]"
 		></div>
 
 		<div class=" flex max-w-full w-full mx-auto px-1.5 md:px-2 pt-0.5 bg-transparent">
 			<div class="flex items-center w-full max-w-full">
 				{#if $mobile && !$showSidebar}
 					<div
-						class="-translate-x-0.5 mr-1 mt-1 self-start flex flex-none items-center text-gray-600 dark:text-gray-400"
+						class="-translate-x-0.5 mr-1 mt-1 self-start flex flex-none items-center text-primary/70"
 					>
 						<Tooltip content={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}>
 							<button
-								class=" cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+								class=" cursor-pointer flex rounded-lg hover:bg-primary-50 transition"
 								on:click={() => {
 									showSidebar.set(!$showSidebar);
 								}}
@@ -116,14 +116,14 @@
 					{/if}
 				</div>
 
-				<div class="self-start flex flex-none items-center text-gray-600 dark:text-gray-400">
-					<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-300 dark:bg-stone-700" /> -->
+				<div class="self-start flex flex-none items-center text-primary/70">
+					<!-- <div class="md:hidden flex self-center w-[1px] h-5 mx-2 bg-gray-500 dark:bg-stone-700" /> -->
 
 					{#if $user?.role === 'user' ? ($user?.permissions?.chat?.temporary ?? true) && !($user?.permissions?.chat?.temporary_enforced ?? false) : true}
 						{#if !chat?.id}
 							<Tooltip content={$i18n.t(`Temporary Chat`)}>
 								<button
-									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-primary/5 transition"
 									id="temporary-chat-button"
 									on:click={async () => {
 										if (($settings?.temporaryChatByDefault ?? false) && $temporaryChatEnabled) {
@@ -155,7 +155,7 @@
 						{:else if $temporaryChatEnabled}
 							<Tooltip content={$i18n.t(`Save Chat`)}>
 								<button
-									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-primary/5 transition"
 									id="save-temporary-chat-button"
 									on:click={async () => {
 										onSaveTempChat();
@@ -174,7 +174,7 @@
 							<button
 								class=" flex {$showSidebar
 									? 'md:hidden'
-									: ''} cursor-pointer px-2 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+									: ''} cursor-pointer px-2 py-2 rounded-xl text-primary/70 hover:bg-primary/5 transition"
 								on:click={() => {
 									initNewChat();
 								}}
@@ -200,7 +200,7 @@
 							{moveChatHandler}
 						>
 							<button
-								class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+								class="flex cursor-pointer px-2 py-2 rounded-xl hover:bg-primary/5 transition"
 								id="chat-context-menu-button"
 							>
 								<div class=" m-auto self-center">
@@ -213,7 +213,7 @@
 					{#if $user?.role === 'admin' || ($user?.permissions.chat?.controls ?? true)}
 						<Tooltip content={$i18n.t('Controls')}>
 							<button
-								class=" flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+								class=" flex cursor-pointer px-2 py-2 rounded-xl hover:bg-gray-50 hover:bg-primary-50 transition"
 								on:click={async () => {
 									await showControls.set(!$showControls);
 								}}
@@ -237,9 +237,7 @@
 								}
 							}}
 						>
-							<div
-								class="select-none flex rounded-xl p-1.5 w-full hover:bg-gray-50 dark:hover:bg-gray-850 transition"
-							>
+							<div class="select-none flex rounded-xl p-1.5 w-full hover:bg-primary/5 transition">
 								<div class=" self-center">
 									<span class="sr-only">{$i18n.t('User menu')}</span>
 									<img

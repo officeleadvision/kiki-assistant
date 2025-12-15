@@ -63,7 +63,7 @@
 
 				<input
 					id="webpage-url"
-					class={`w-full flex-1 text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-300 dark:placeholder:text-gray-700'}`}
+					class={`w-full flex-1 text-sm bg-transparent ${($settings?.highContrastMode ?? false) ? 'placeholder:text-gray-700 dark:placeholder:text-gray-100' : 'outline-hidden placeholder:text-gray-500 dark:placeholder:text-gray-700'}`}
 					type="text"
 					bind:value={url}
 					placeholder={'https://example.com'}

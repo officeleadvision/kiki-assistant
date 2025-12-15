@@ -1,6 +1,6 @@
 {
-  "name": "Open WebUI",
-  "short_name": "WebUI",
+  "name": "Lead Me",
+  "short_name": "Lead Me",
   "icons": [
     {
       "src": "/static/web-app-manifest-192x192.png",

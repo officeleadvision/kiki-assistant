@@ -429,7 +429,7 @@
 				'about us',
 				'aboutapp',
 				'aboutme',
-				'aboutopenwebui',
+				'aboutLead Me',
 				'aboutpage',
 				'aboutus',
 				'check for updates',
@@ -571,7 +571,7 @@
 
 <Modal size="2xl" bind:show>
 	<div class="text-gray-700 dark:text-gray-100 mx-1">
-		<div class=" flex justify-between dark:text-gray-300 px-4 md:px-4.5 pt-4.5 pb-0.5 md:pb-2.5">
+		<div class=" flex justify-between dark:text-gray-500 px-4 md:px-4.5 pt-4.5 pb-0.5 md:pb-2.5">
 			<div class=" text-lg font-medium self-center">{$i18n.t('Settings')}</div>
 			<button
 				aria-label={$i18n.t('Close settings modal')}
@@ -602,7 +602,7 @@
 					</div>
 					<label class="sr-only" for="search-input-settings-modal">{$i18n.t('Search')}</label>
 					<input
-						class={`w-full py-1 text-sm bg-transparent dark:text-gray-300 outline-hidden
+						class={`w-full py-1 text-sm bg-transparent dark:text-gray-500 outline-hidden
 								${($settings?.highContrastMode ?? false) ? 'placeholder-gray-800' : ''}`}
 						bind:value={search}
 						id="search-input-settings-modal"
@@ -621,11 +621,11 @@
 								${
 									selectedTab === 'general'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'general';
@@ -645,11 +645,11 @@
 								${
 									selectedTab === 'interface'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'interface';
@@ -670,11 +670,11 @@
 								${
 									selectedTab === 'connections'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 									on:click={() => {
 										selectedTab = 'connections';
@@ -696,11 +696,11 @@
 								${
 									selectedTab === 'tools'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 									on:click={() => {
 										selectedTab = 'tools';
@@ -721,11 +721,11 @@
 								${
 									selectedTab === 'personalization'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'personalization';
@@ -745,11 +745,11 @@
 								${
 									selectedTab === 'audio'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'audio';
@@ -769,11 +769,11 @@
 								${
 									selectedTab === 'data_controls'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'data_controls';
@@ -793,11 +793,11 @@
 								${
 									selectedTab === 'account'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'account';
@@ -817,11 +817,11 @@
 								${
 									selectedTab === 'about'
 										? ($settings?.highContrastMode ?? false)
-											? 'dark:bg-gray-800 bg-gray-200'
+											? 'bg-primary/10'
 											: ''
 										: ($settings?.highContrastMode ?? false)
-											? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-											: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'
+											? 'hover:bg-primary/10'
+											: 'text-primary/40 hover:text-primary'
 								}`}
 								on:click={() => {
 									selectedTab = 'about';
@@ -843,8 +843,8 @@
 					<a
 						href="/admin/settings"
 						class="px-0.5 md:px-2.5 py-1 min-w-fit rounded-xl flex-1 md:flex-none md:mt-auto flex text-left transition {$settings?.highContrastMode
-							? 'hover:bg-gray-200 dark:hover:bg-gray-800'
-							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
+							? 'hover:bg-primary/10'
+							: 'text-primary/40 hover:text-primary'}"
 						on:click={async (e) => {
 							e.preventDefault();
 							await goto('/admin/settings');

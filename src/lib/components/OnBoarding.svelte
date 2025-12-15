@@ -15,21 +15,8 @@
 		const logo = document.getElementById('logo');
 
 		if (logo) {
-			const isDarkMode = document.documentElement.classList.contains('dark');
-
-			if (isDarkMode) {
-				const darkImage = new Image();
-				darkImage.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
-
-				darkImage.onload = () => {
-					logo.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
-					logo.style.filter = ''; // Ensure no inversion is applied if splash-dark.png exists
-				};
-
-				darkImage.onerror = () => {
-					logo.style.filter = 'invert(1)'; // Invert image if splash-dark.png is missing
-				};
-			}
+			// Always use the regular favicon for white theme
+			logo.src = `${WEBUI_BASE_URL}/static/favicon.png`;
 		}
 	}
 
@@ -46,7 +33,7 @@
 					<img
 						id="logo"
 						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/favicon.png"
+						src="{WEBUI_BASE_URL}/static/logo.svg"
 						class=" w-6 rounded-full"
 						alt="logo"
 					/>
@@ -57,13 +44,13 @@
 		<SlideShow duration={5000} />
 
 		<div
-			class="w-full h-full absolute top-0 left-0 bg-linear-to-t from-20% from-black to-transparent"
+			class="w-full h-full absolute top-0 left-0 bg-gradient-to-t from-20% from-primary to-transparent"
 		></div>
 
-		<div class="w-full h-full absolute top-0 left-0 backdrop-blur-xs bg-black/50"></div>
+		<div class="w-full h-full absolute top-0 left-0 backdrop-blur-xs bg-primary/50"></div>
 
 		<div class="relative bg-transparent w-full h-screen max-h-[100dvh] flex z-10">
-			<div class="flex flex-col justify-end w-full items-center pb-10 text-center">
+			<div class="flex flex-col justify-end w-full items-center pb-10 text-center text-white">
 				<div class="text-5xl lg:text-7xl font-secondary">
 					<Marquee
 						duration={5000}
@@ -88,14 +75,14 @@
 					<div class="flex flex-col justify-center items-center">
 						<button
 							aria-labelledby="get-started"
-							class="relative z-20 flex p-1 rounded-full bg-white/5 hover:bg-white/10 transition font-medium text-sm"
+							class="relative z-20 flex p-1 rounded-full bg-white/20 hover:bg-white/30 transition font-medium text-sm"
 							on:click={() => {
 								getStartedHandler();
 							}}
 						>
 							<ArrowRightCircle className="size-6" />
 						</button>
-						<div id="get-started" class="mt-1.5 font-primary text-base font-medium">
+						<div id="get-started" class="mt-1.5 font-primary text-base font-medium text-white">
 							{$i18n.t(`Get started`)}
 						</div>
 					</div>

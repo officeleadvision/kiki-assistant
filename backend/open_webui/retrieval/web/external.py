@@ -26,14 +26,14 @@ def search_external(
 ) -> List[SearchResult]:
     try:
         headers = {
-            "User-Agent": "Open WebUI (https://github.com/open-webui/open-webui) RAG Bot",
+            "User-Agent": "Lead Me (https://github.com/open-webui/open-webui) RAG Bot",
             "Authorization": f"Bearer {external_api_key}",
         }
         headers = include_user_info_headers(headers, user)
 
         chat_id = getattr(request.state, "chat_id", None)
         if chat_id:
-            headers["X-OpenWebUI-Chat-Id"] = str(chat_id)
+            headers["X-Lead Me-Chat-Id"] = str(chat_id)
 
         response = requests.post(
             external_url,

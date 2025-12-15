@@ -91,7 +91,7 @@
 							<div class="flex w-full">
 								<div class="flex-1">
 									<input
-										class="w-full text-sm py-0.5 placeholder:text-gray-300 dark:placeholder:text-gray-700 bg-transparent outline-hidden"
+										class="w-full text-sm py-0.5 placeholder:text-gray-500 dark:placeholder:text-gray-700 bg-transparent outline-hidden"
 										type="text"
 										placeholder={$i18n.t('Enter Jupyter URL')}
 										bind:value={config.CODE_EXECUTION_JUPYTER_URL}
@@ -217,7 +217,7 @@
 								<div class="flex w-full">
 									<div class="flex-1">
 										<input
-											class="w-full text-sm py-0.5 placeholder:text-gray-300 dark:placeholder:text-gray-700 bg-transparent outline-hidden"
+											class="w-full text-sm py-0.5 placeholder:text-gray-500 dark:placeholder:text-gray-700 bg-transparent outline-hidden"
 											type="text"
 											placeholder={$i18n.t('Enter Jupyter URL')}
 											bind:value={config.CODE_INTERPRETER_JUPYTER_URL}

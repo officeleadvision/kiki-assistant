@@ -643,7 +643,7 @@
 					<div
 						class="self-center text-xs font-medium first-letter:capitalize ml-0.5 translate-y-[1px] {($settings?.highContrastMode ??
 						false)
-							? 'dark:text-gray-100 text-gray-900'
+							? 'text-primary'
 							: 'invisible group-hover:visible transition text-gray-400'}"
 					>
 						<Tooltip content={dayjs(message.timestamp * 1000).format('LLLL')}>
@@ -731,7 +731,7 @@
 									<div>
 										<button
 											id="save-new-message-button"
-											class="px-3.5 py-1.5 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 transition rounded-3xl"
+											class="px-3.5 py-1.5 bg-primary/5 hover:bg-primary/10 border border-primary/10 text-primary transition rounded-3xl"
 											on:click={() => {
 												saveAsCopyHandler();
 											}}
@@ -753,7 +753,7 @@
 
 										<button
 											id="confirm-edit-message-button"
-											class="px-3.5 py-1.5 bg-gray-900 dark:bg-white hover:bg-gray-850 text-gray-100 dark:text-gray-800 transition rounded-3xl"
+											class="px-3.5 py-1.5 bg-primary hover:bg-primary-700 text-white transition rounded-3xl"
 											on:click={() => {
 												editMessageConfirmHandler();
 											}}
@@ -839,7 +839,7 @@
 				{#if !edit}
 					<div
 						bind:this={buttonsContainerElement}
-						class="flex justify-start overflow-x-auto buttons text-gray-600 dark:text-gray-500 mt-0.5"
+						class="flex justify-start overflow-x-auto buttons text-primary/60 mt-0.5"
 					>
 						{#if message.done || siblings.length > 1}
 							{#if siblings.length > 1}
@@ -870,7 +870,7 @@
 
 									{#if messageIndexEdit}
 										<div
-											class="text-sm flex justify-center font-semibold self-center dark:text-gray-100 min-w-fit"
+											class="text-sm flex justify-center font-semibold self-center text-primary min-w-fit"
 										>
 											<input
 												id="message-index-input-{message.id}"
@@ -897,7 +897,7 @@
 									{:else}
 										<!-- svelte-ignore a11y-no-static-element-interactions -->
 										<div
-											class="text-sm tracking-widest font-semibold self-center dark:text-gray-100 min-w-fit"
+											class="text-sm tracking-widest font-semibold self-center text-primary min-w-fit"
 											on:dblclick={async () => {
 												messageIndexEdit = true;
 

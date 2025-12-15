@@ -326,7 +326,7 @@
 															}}
 														>
 															<button
-																class="self-center w-fit text-sm p-1 dark:text-gray-300 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
+																class="self-center w-fit text-sm p-1 dark:text-gray-500 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 rounded-xl"
 																type="button"
 															>
 																<EllipsisHorizontal className="size-5" />
@@ -378,7 +378,7 @@
 							{$i18n.t('No Notes')}
 						</div>
 
-						<div class="mt-1 text-sm text-gray-300 dark:text-gray-700">
+						<div class="mt-1 text-sm text-gray-500 dark:text-gray-700">
 							{$i18n.t('Create your first note by clicking on the plus button below.')}
 						</div>
 					</div>

@@ -141,7 +141,7 @@
 	{@const urlCitations = citations.filter((c) => c?.source?.name?.startsWith('http'))}
 	<div class=" py-1 -mx-0.5 w-full flex gap-1 items-center flex-wrap">
 		<button
-			class="text-xs font-medium text-gray-600 dark:text-gray-300 px-3.5 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition flex items-center gap-1 border border-gray-50 dark:border-gray-850/30"
+			class="text-xs font-medium text-primary/70 px-3.5 h-8 rounded-full hover:bg-primary/5 transition flex items-center gap-1 border border-gray-100"
 			on:click={() => {
 				showCitations = !showCitations;
 			}}
@@ -152,7 +152,7 @@
 						<img
 							src="https://www.google.com/s2/favicons?sz=32&domain={citation.source.name}"
 							alt="favicon"
-							class="size-4 rounded-full shrink-0 border border-white dark:border-gray-850 bg-white dark:bg-gray-900"
+							class="size-4 rounded-full shrink-0 border border-white bg-white"
 						/>
 					{/each}
 				</div>
@@ -176,7 +176,7 @@
 			{#each citations as citation, idx}
 				<button
 					id={`source-${id}-${idx + 1}`}
-					class="no-toggle outline-hidden flex dark:text-gray-300 bg-transparent text-gray-600 rounded-xl gap-1.5 items-center"
+					class="no-toggle outline-hidden flex text-primary/70 bg-transparent rounded-xl gap-1.5 items-center"
 					on:click={() => {
 						showCitationModal = true;
 						selectedCitation = citation;
@@ -185,9 +185,7 @@
 					<div class=" font-medium bg-gray-50 dark:bg-gray-850 rounded-md px-1">
 						{idx + 1}
 					</div>
-					<div
-						class="flex-1 truncate hover:text-black dark:text-white/60 dark:hover:text-white transition text-left"
-					>
+					<div class="flex-1 truncate text-primary/60 hover:text-primary transition text-left">
 						{decodeString(citation.source.name)}
 					</div>
 				</button>

@@ -200,13 +200,13 @@
 
 <div class="px-1 mb-1 flex justify-center space-x-2 relative z-10" id="search-container">
 	<div class="flex w-full rounded-xl" id="chat-search">
-		<div class="self-center py-2 rounded-l-xl bg-transparent dark:text-gray-300">
+		<div class="self-center py-2 rounded-l-xl bg-transparent text-primary/70">
 			<Search />
 		</div>
 
 		<input
 			id="search-input"
-			class="w-full rounded-r-xl py-1.5 pl-2.5 text-sm bg-transparent dark:text-gray-300 outline-hidden"
+			class="w-full rounded-r-xl py-1.5 pl-2.5 text-sm bg-transparent dark:text-gray-500 outline-hidden"
 			placeholder={placeholder ? placeholder : $i18n.t('Search')}
 			autocomplete="off"
 			bind:value
@@ -286,7 +286,7 @@
 		{#if showClearButton && value}
 			<div class="self-center pl-1.5 translate-y-[0.5px] rounded-l-xl bg-transparent">
 				<button
-					class="p-0.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900 transition"
+					class="p-0.5 rounded-full hover:bg-primary/10 transition"
 					on:click={clearSearchInput}
 				>
 					<XMark className="size-3" strokeWidth="2" />
@@ -312,16 +312,16 @@
 		>
 			<div class="px-3 py-2.5 text-xs group">
 				{#if filteredItems.length > 0}
-					<div class="px-1 font-medium dark:text-gray-300 text-gray-700 mb-1 capitalize">
+					<div class="px-1 font-medium text-primary mb-1 capitalize">
 						{selectedOption}
 					</div>
 
 					<div class="max-h-60 overflow-auto">
 						{#each filteredItems as item, itemIdx}
 							<button
-								class=" px-1.5 py-0.5 flex gap-1 hover:bg-gray-100 dark:hover:bg-gray-900 w-full rounded {selectedIdx ===
+								class=" px-1.5 py-0.5 flex gap-1 hover:bg-primary/5 w-full rounded {selectedIdx ===
 								itemIdx
-									? 'bg-gray-100 dark:bg-gray-900'
+									? 'bg-primary/5'
 									: ''}"
 								data-selected={selectedIdx === itemIdx}
 								id="search-item-{itemIdx}"
@@ -337,7 +337,7 @@
 									dispatch('input');
 								}}
 							>
-								<div class="dark:text-gray-300 text-gray-700 font-medium line-clamp-1 shrink-0">
+								<div class="text-primary font-medium line-clamp-1 shrink-0">
 									{item.name}
 								</div>
 
@@ -348,7 +348,7 @@
 						{/each}
 					</div>
 				{:else if filteredOptions.length > 0}
-					<div class="px-1 font-medium dark:text-gray-300 text-gray-700 mb-1">
+					<div class="px-1 font-medium text-primary mb-1">
 						{$i18n.t('Search options')}
 					</div>
 
@@ -373,7 +373,7 @@
 									dispatch('input');
 								}}
 							>
-								<div class="dark:text-gray-300 text-gray-700 font-medium">{option.name}</div>
+								<div class="text-primary font-medium">{option.name}</div>
 
 								<div class=" text-gray-500 line-clamp-1">
 									{option.description}
