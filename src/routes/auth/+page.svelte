@@ -205,12 +205,14 @@
 			<!-- Right Side - Login Form -->
 			<div class="w-full lg:w-1/2 xl:w-2/5 flex flex-col bg-white dark:bg-gray-900 relative">
 				<!-- Mobile Logo -->
-				<div class="lg:hidden absolute inset-0 flex items-start justify-center pt-10 z-20">
+				<div
+					class="lg:hidden absolute inset-0 flex items-start justify-center pt-10 z-20 pointer-events-none"
+				>
 					<img
 						id="logo"
 						crossorigin="anonymous"
 						src="{WEBUI_BASE_URL}/static/logo.svg"
-						class="w-32 h-32 rounded-2xl shadow-lg"
+						class="w-32 h-32 rounded-2xl shadow-lg pointer-events-none"
 						alt=""
 					/>
 				</div>
