@@ -63,8 +63,8 @@
 				const logo = document.createElement('img');
 				logo.id = 'logo';
 				logo.style =
-					'position: absolute; width: auto; height: 6rem; top: 44%; left: 50%; transform: translateX(-50%); display:block;';
-				logo.src = '/static/logo.png';
+					'position:absolute;width:auto;height:12rem;top:44%;left:50%;display:block;transform:translate(-50%, -4%);opacity:0.9;animation:floatFade 2.8s ease-in-out infinite;';
+				logo.src = '/static/logo.svg';
 
 				document.addEventListener('DOMContentLoaded', function () {
 					const splash = document.getElementById('splash-screen');
@@ -209,6 +209,21 @@
 		@keyframes pulse {
 			50% {
 				opacity: 0.65;
+			}
+		}
+
+		@keyframes floatFade {
+			0% {
+				transform: translate(-50%, -4%) scale(0.99);
+				opacity: 0.82;
+			}
+			50% {
+				transform: translate(-50%, -6%) scale(1.01);
+				opacity: 0.96;
+			}
+			100% {
+				transform: translate(-50%, -4%) scale(0.99);
+				opacity: 0.82;
 			}
 		}
 

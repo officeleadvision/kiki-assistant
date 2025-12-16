@@ -590,7 +590,7 @@
 							<img
 								crossorigin="anonymous"
 								src="{WEBUI_BASE_URL}/static/logo.svg"
-								class="sidebar-new-chat-icon size-12 rounded-full group-hover:hidden"
+								class="sidebar-new-chat-icon size-16 rounded-full group-hover:hidden"
 								alt="logo"
 								on:error={(e) => {
 									e.target.src = `${WEBUI_BASE_URL}/static/favicon.png`;
@@ -779,7 +779,7 @@
 				class="sidebar px-[0.5625rem] pt-2 pb-1.5 flex justify-between space-x-1 text-primary sticky top-0 z-10 -mb-3"
 			>
 				<a
-					class="flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-primary-50 transition no-drag-region"
+					class="flex items-center rounded-xl size-16 h-full justify-center hover:bg-primary-50 transition no-drag-region"
 					href="/"
 					draggable="false"
 					on:click={newChatHandler}
@@ -787,7 +787,7 @@
 					<img
 						crossorigin="anonymous"
 						src="{WEBUI_BASE_URL}/static/logo.svg"
-						class="sidebar-new-chat-icon size-12 rounded-full"
+						class="sidebar-new-chat-icon size-16 rounded-full"
 						alt="logo"
 						on:error={(e) => {
 							e.target.src = `${WEBUI_BASE_URL}/static/favicon.png`;
@@ -796,7 +796,10 @@
 				</a>
 
 				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
-					<div id="sidebar-webui-name" class=" self-center font-medium text-primary font-primary">
+					<div
+						id="sidebar-webui-name"
+						class=" self-center font-medium text-primary font-primary text-xl"
+					>
 						{$WEBUI_NAME}
 					</div>
 				</a>
@@ -805,7 +808,7 @@
 					placement="bottom"
 				>
 					<button
-						class="flex rounded-xl size-8.5 justify-center items-center hover:bg-primary-50 transition {isWindows
+						class="flex rounded-xl size-14 justify-center items-center hover:bg-primary-50 transition {isWindows
 							? 'cursor-pointer'
 							: 'cursor-[w-resize]'}"
 						on:click={() => {
