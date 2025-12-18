@@ -9,7 +9,8 @@
 		models,
 		prompts,
 		knowledge,
-		tools
+		tools,
+		config
 	} from '$lib/stores';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
@@ -19,6 +20,9 @@
 	const i18n = getContext('i18n');
 
 	let loaded = false;
+
+	$: showSharePoint =
+		$config?.features?.enable_onedrive_integration && $config?.features?.enable_onedrive_business;
 
 	onMount(async () => {
 		if ($user?.role !== 'admin') {
@@ -119,6 +123,17 @@
 								href="/workspace/tools"
 							>
 								{$i18n.t('Tools')}
+							</a>
+						{/if}
+
+						{#if showSharePoint && ($user?.role === 'admin' || $user?.permissions?.workspace?.knowledge)}
+							<a
+								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/sharepoint')
+									? ''
+									: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+								href="/workspace/sharepoint"
+							>
+								{$i18n.t('SharePoint')}
 							</a>
 						{/if}
 					</div>

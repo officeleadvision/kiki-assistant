@@ -1,0 +1,243 @@
+import logging
+import time
+from typing import Optional, List
+import uuid
+
+from open_webui.internal.db import Base, get_db
+from open_webui.env import SRC_LOG_LEVELS
+
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import BigInteger, Column, String, Text
+from open_webui.internal.db import JSONField
+
+log = logging.getLogger(__name__)
+log.setLevel(SRC_LOG_LEVELS["MODELS"])
+
+####################
+# SharePointSync DB Schema
+####################
+
+
+class SharePointSync(Base):
+    __tablename__ = "sharepoint_sync"
+
+    id = Column(Text, unique=True, primary_key=True)
+    user_id = Column(Text)
+
+    name = Column(Text)  # Display name for the sync
+    knowledge_id = Column(Text)  # Target knowledge collection ID
+
+    # SharePoint folder info
+    drive_id = Column(Text)
+    item_id = Column(Text)  # Folder item ID
+    folder_path = Column(Text)  # Display path
+    sharepoint_endpoint = Column(Text)  # The SharePoint endpoint URL
+
+    # Sync metadata
+    last_sync_at = Column(BigInteger, nullable=True)
+    file_count = Column(BigInteger, default=0)
+    sync_status = Column(Text, default="idle")  # idle, syncing, synced, error
+    sync_error = Column(Text, nullable=True)
+    sync_logs = Column(JSONField, nullable=True)  # List of log entries
+
+    created_at = Column(BigInteger)
+    updated_at = Column(BigInteger)
+
+
+class SharePointSyncModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    name: str
+    knowledge_id: str
+
+    drive_id: str
+    item_id: str
+    folder_path: str
+    sharepoint_endpoint: str
+
+    last_sync_at: Optional[int] = None
+    file_count: int = 0
+    sync_status: str = "idle"
+    sync_error: Optional[str] = None
+    sync_logs: Optional[List[dict]] = None
+
+    created_at: int
+    updated_at: int
+
+
+####################
+# Forms
+####################
+
+
+class SharePointSyncForm(BaseModel):
+    name: str
+    knowledge_id: str
+    drive_id: str
+    item_id: str
+    folder_path: str
+    sharepoint_endpoint: str
+
+
+class SharePointSyncUpdateForm(BaseModel):
+    name: Optional[str] = None
+    last_sync_at: Optional[int] = None
+    file_count: Optional[int] = None
+    sync_status: Optional[str] = None
+    sync_error: Optional[str] = None
+    sync_logs: Optional[List[dict]] = None
+
+
+####################
+# SharePointSyncs Table
+####################
+
+
+class SharePointSyncsTable:
+    def insert_new_sync(
+        self, user_id: str, form_data: SharePointSyncForm
+    ) -> Optional[SharePointSyncModel]:
+        with get_db() as db:
+            sync_id = str(uuid.uuid4())
+            sync = SharePointSyncModel(
+                id=sync_id,
+                user_id=user_id,
+                name=form_data.name,
+                knowledge_id=form_data.knowledge_id,
+                drive_id=form_data.drive_id,
+                item_id=form_data.item_id,
+                folder_path=form_data.folder_path,
+                sharepoint_endpoint=form_data.sharepoint_endpoint,
+                last_sync_at=None,
+                file_count=0,
+                sync_status="idle",
+                sync_error=None,
+                created_at=int(time.time()),
+                updated_at=int(time.time()),
+            )
+
+            try:
+                result = SharePointSync(**sync.model_dump())
+                db.add(result)
+                db.commit()
+                db.refresh(result)
+                if result:
+                    return SharePointSyncModel.model_validate(result)
+                else:
+                    return None
+            except Exception as e:
+                log.exception(f"Error creating SharePoint sync: {e}")
+                return None
+
+    def get_sync_by_id(self, id: str) -> Optional[SharePointSyncModel]:
+        with get_db() as db:
+            try:
+                sync = db.query(SharePointSync).filter_by(id=id).first()
+                if sync:
+                    return SharePointSyncModel.model_validate(sync)
+                return None
+            except Exception:
+                return None
+
+    def get_syncs_by_user_id(self, user_id: str) -> List[SharePointSyncModel]:
+        with get_db() as db:
+            try:
+                syncs = (
+                    db.query(SharePointSync)
+                    .filter_by(user_id=user_id)
+                    .order_by(SharePointSync.updated_at.desc())
+                    .all()
+                )
+                return [SharePointSyncModel.model_validate(sync) for sync in syncs]
+            except Exception:
+                return []
+
+    def get_syncs_by_knowledge_id(self, knowledge_id: str) -> List[SharePointSyncModel]:
+        with get_db() as db:
+            try:
+                syncs = (
+                    db.query(SharePointSync)
+                    .filter_by(knowledge_id=knowledge_id)
+                    .order_by(SharePointSync.updated_at.desc())
+                    .all()
+                )
+                return [SharePointSyncModel.model_validate(sync) for sync in syncs]
+            except Exception:
+                return []
+
+    def update_sync_by_id(
+        self, id: str, form_data: SharePointSyncUpdateForm
+    ) -> Optional[SharePointSyncModel]:
+        with get_db() as db:
+            try:
+                sync = db.query(SharePointSync).filter_by(id=id).first()
+                if sync:
+                    update_data = form_data.model_dump(exclude_unset=True)
+                    update_data["updated_at"] = int(time.time())
+                    for key, value in update_data.items():
+                        setattr(sync, key, value)
+                    db.commit()
+                    db.refresh(sync)
+                    return SharePointSyncModel.model_validate(sync)
+                return None
+            except Exception as e:
+                log.exception(f"Error updating SharePoint sync: {e}")
+                return None
+
+    def delete_sync_by_id(self, id: str) -> bool:
+        with get_db() as db:
+            try:
+                sync = db.query(SharePointSync).filter_by(id=id).first()
+                if sync:
+                    db.delete(sync)
+                    db.commit()
+                    return True
+                return False
+            except Exception as e:
+                log.exception(f"Error deleting SharePoint sync: {e}")
+                return False
+
+
+SharePointSyncs = SharePointSyncsTable()
+
+
+# Auto-create table and ensure columns exist
+def ensure_sharepoint_sync_table():
+    """Create the sharepoint_sync table if it doesn't exist, and add missing columns"""
+    from open_webui.internal.db import engine
+    from sqlalchemy import inspect, text
+    
+    try:
+        # Create table if it doesn't exist
+        SharePointSync.__table__.create(engine, checkfirst=True)
+        log.info("SharePoint sync table ready")
+        
+        # Check for missing columns and add them
+        inspector = inspect(engine)
+        if inspector.has_table("sharepoint_sync"):
+            existing_columns = {col["name"] for col in inspector.get_columns("sharepoint_sync")}
+            
+            # Define columns that might be missing (added in updates)
+            columns_to_check = {
+                "sync_logs": "TEXT",  # JSON stored as TEXT
+            }
+            
+            with engine.connect() as conn:
+                for col_name, col_type in columns_to_check.items():
+                    if col_name not in existing_columns:
+                        try:
+                            conn.execute(text(f"ALTER TABLE sharepoint_sync ADD COLUMN {col_name} {col_type}"))
+                            conn.commit()
+                            log.info(f"Added missing column '{col_name}' to sharepoint_sync table")
+                        except Exception as col_err:
+                            log.warning(f"Could not add column {col_name}: {col_err}")
+                            
+    except Exception as e:
+        log.warning(f"Could not setup sharepoint_sync table: {e}")
+
+
+# Run on module load
+ensure_sharepoint_sync_table()
+

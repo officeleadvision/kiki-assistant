@@ -1,5 +1,6 @@
 import type { PopupRequest, PublicClientApplication } from '@azure/msal-browser';
 import { v4 as uuidv4 } from 'uuid';
+import { WEBUI_BASE_URL } from '$lib/constants';
 
 class OneDriveConfig {
 	private static instance: OneDriveConfig;
@@ -32,7 +33,7 @@ class OneDriveConfig {
 	}
 
 	private async getCredentials(): Promise<void> {
-		const response = await fetch('/api/config', {
+		const response = await fetch(`${WEBUI_BASE_URL}/api/config`, {
 			headers: {
 				'Content-Type': 'application/json'
 			},
@@ -78,7 +79,8 @@ class OneDriveConfig {
 			const msalParams = {
 				auth: {
 					authority: `https://login.microsoftonline.com/${authorityEndpoint}`,
-					clientId: clientId
+					clientId: clientId,
+					redirectUri: window.location.origin // Use base URL (e.g., http://localhost:5173) to match SPA redirect URI
 				}
 			};
 
@@ -450,4 +452,214 @@ export async function pickAndDownloadFile(
 	return { blob, name: selectedFile.name };
 }
 
-export { downloadOneDriveFile };
+// Get picker parameters for folder selection
+function getFolderPickerParams(): PickerParams {
+	const channelId = uuidv4();
+	const config = OneDriveConfig.getInstance();
+
+	const params: PickerParams = {
+		sdk: '8.0',
+		entry: {
+			oneDrive: {}
+		},
+		authentication: {},
+		messaging: {
+			origin: window?.location?.origin || '',
+			channelId
+		},
+		search: {
+			enabled: true
+		},
+		typesAndSources: {
+			mode: 'folders', // Select folders instead of files
+			pivots: {
+				oneDrive: true,
+				recent: false,
+				myOrganization: config.getAuthorityType() === 'organizations'
+			}
+		}
+	};
+
+	return params;
+}
+
+export interface SharePointFolderInfo {
+	id: string;
+	name: string;
+	driveId: string;
+	endpoint: string;
+	path: string;
+}
+
+// Open SharePoint folder picker and return selected folder metadata
+export async function openSharePointFolderPicker(): Promise<SharePointFolderInfo | null> {
+	if (typeof window === 'undefined') {
+		throw new Error('Not in browser environment');
+	}
+
+	// Always use organizations for SharePoint
+	const authorityType = 'organizations';
+
+	// Initialize OneDrive config with organizations authority type
+	const config = OneDriveConfig.getInstance();
+	await config.initialize(authorityType);
+
+	return new Promise((resolve, reject) => {
+		let pickerWindow: Window | null = null;
+		let channelPort: MessagePort | null = null;
+		const params = getFolderPickerParams();
+		const baseUrl = config.getBaseUrl();
+
+		const handleWindowMessage = (event: MessageEvent) => {
+			if (event.source !== pickerWindow) return;
+			const message = event.data;
+			if (message?.type === 'initialize' && message?.channelId === params.messaging.channelId) {
+				channelPort = event.ports?.[0];
+				if (!channelPort) return;
+				channelPort.addEventListener('message', handlePortMessage);
+				channelPort.start();
+				channelPort.postMessage({ type: 'activate' });
+			}
+		};
+
+		const handlePortMessage = async (portEvent: MessageEvent) => {
+			const portData = portEvent.data;
+			switch (portData.type) {
+				case 'notification':
+					break;
+				case 'command': {
+					channelPort?.postMessage({ type: 'acknowledge', id: portData.id });
+					const command = portData.data;
+					switch (command.command) {
+						case 'authenticate': {
+							try {
+								const resource =
+									config.getAuthorityType() === 'organizations' ? command.resource : undefined;
+								const newToken = await getToken(resource, authorityType);
+								if (newToken) {
+									channelPort?.postMessage({
+										type: 'result',
+										id: portData.id,
+										data: { result: 'token', token: newToken }
+									});
+								} else {
+									throw new Error('Could not retrieve auth token');
+								}
+							} catch {
+								channelPort?.postMessage({
+									type: 'result',
+									id: portData.id,
+									data: {
+										result: 'error',
+										error: { code: 'tokenError', message: 'Failed to get token' }
+									}
+								});
+							}
+							break;
+						}
+						case 'close': {
+							cleanup();
+							resolve(null);
+							break;
+						}
+						case 'pick': {
+							channelPort?.postMessage({
+								type: 'result',
+								id: portData.id,
+								data: { result: 'success' }
+							});
+							cleanup();
+
+							// Extract folder info from the picked item
+							if (command.items && command.items.length > 0) {
+								const folder = command.items[0];
+								resolve({
+									id: folder.id,
+									name: folder.name,
+									driveId: folder.parentReference?.driveId,
+									endpoint: folder['@sharePoint.endpoint'],
+									path: folder.parentReference?.path
+										? `${folder.parentReference.path}/${folder.name}`
+										: folder.name
+								});
+							} else {
+								resolve(null);
+							}
+							break;
+						}
+						default: {
+							channelPort?.postMessage({
+								result: 'error',
+								error: { code: 'unsupportedCommand', message: command.command },
+								isExpected: true
+							});
+							break;
+						}
+					}
+					break;
+				}
+			}
+		};
+
+		function cleanup() {
+			window.removeEventListener('message', handleWindowMessage);
+			if (channelPort) {
+				channelPort.removeEventListener('message', handlePortMessage);
+			}
+			if (pickerWindow) {
+				pickerWindow.close();
+				pickerWindow = null;
+			}
+		}
+
+		const initializePicker = async () => {
+			try {
+				const authToken = await getToken(undefined, authorityType);
+				if (!authToken) {
+					return reject(new Error('Failed to acquire access token'));
+				}
+
+				pickerWindow = window.open('', 'SharePointFolderPicker', 'width=800,height=600');
+				if (!pickerWindow) {
+					return reject(new Error('Failed to open SharePoint picker window'));
+				}
+
+				const queryString = new URLSearchParams({
+					filePicker: JSON.stringify(params)
+				});
+
+				const url = baseUrl + `/_layouts/15/FilePicker.aspx?${queryString}`;
+
+				const form = pickerWindow.document.createElement('form');
+				form.setAttribute('action', url);
+				form.setAttribute('method', 'POST');
+				const input = pickerWindow.document.createElement('input');
+				input.setAttribute('type', 'hidden');
+				input.setAttribute('name', 'access_token');
+				input.setAttribute('value', authToken);
+				form.appendChild(input);
+
+				pickerWindow.document.body.appendChild(form);
+				form.submit();
+
+				window.addEventListener('message', handleWindowMessage);
+			} catch (err) {
+				if (pickerWindow) {
+					pickerWindow.close();
+				}
+				reject(err);
+			}
+		};
+
+		initializePicker();
+	});
+}
+
+// Get SharePoint access token for API calls
+export async function getSharePointAccessToken(): Promise<string> {
+	const config = OneDriveConfig.getInstance();
+	await config.ensureInitialized('organizations');
+	return await getToken(undefined, 'organizations');
+}
+
+export { downloadOneDriveFile, getToken };
