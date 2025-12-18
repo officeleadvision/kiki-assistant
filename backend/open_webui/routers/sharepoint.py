@@ -43,8 +43,10 @@ router = APIRouter()
 
 @router.get("/", response_model=List[SharePointSyncModel])
 async def get_sharepoint_syncs(user=Depends(get_verified_user)):
-    """Get all SharePoint syncs for the current user"""
-    return SharePointSyncs.get_syncs_by_user_id(user.id)
+    """Get all SharePoint syncs the user has access to (or all for admin)"""
+    if user.role == "admin":
+        return SharePointSyncs.get_all_syncs()
+    return SharePointSyncs.get_syncs_by_user_id(user.id, permission="read")
 
 
 ############################
@@ -63,11 +65,13 @@ async def get_sharepoint_sync_by_id(id: str, user=Depends(get_verified_user)):
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
 
+    # Check access: owner, admin, or has read permission
     if sync.user_id != user.id and user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=ERROR_MESSAGES.UNAUTHORIZED,
-        )
+        if not SharePointSyncs.has_access_to_sync(id, user.id, "read"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.UNAUTHORIZED,
+            )
 
     return sync
 
@@ -109,6 +113,86 @@ async def create_sharepoint_sync(
 
 
 ############################
+# Update SharePoint Sync
+############################
+
+
+class SharePointSyncUpdateRequest(BaseModel):
+    name: Optional[str] = None
+    access_control: Optional[dict] = None
+
+
+@router.post("/{id}/update", response_model=Optional[SharePointSyncModel])
+async def update_sharepoint_sync(
+    id: str, form_data: SharePointSyncUpdateRequest, user=Depends(get_verified_user)
+):
+    """Update a SharePoint sync configuration (name, access_control)"""
+    sync = SharePointSyncs.get_sync_by_id(id)
+
+    if not sync:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+    # Only owner or admin can update access control
+    if sync.user_id != user.id and user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=ERROR_MESSAGES.UNAUTHORIZED,
+        )
+
+    updated = SharePointSyncs.update_sync_by_id(
+        id,
+        SharePointSyncUpdateForm(
+            name=form_data.name,
+            access_control=form_data.access_control,
+        ),
+    )
+
+    return updated
+
+
+############################
+# Cancel SharePoint Sync
+############################
+
+
+@router.post("/{id}/cancel")
+async def cancel_sharepoint_sync(id: str, user=Depends(get_verified_user)):
+    """Cancel a running SharePoint sync"""
+    sync = SharePointSyncs.get_sync_by_id(id)
+
+    if not sync:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ERROR_MESSAGES.NOT_FOUND,
+        )
+
+    # Check access: owner, admin, or has write permission
+    if sync.user_id != user.id and user.role != "admin":
+        if not SharePointSyncs.has_access_to_sync(id, user.id, "write"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.UNAUTHORIZED,
+            )
+
+    if sync.sync_status != "syncing":
+        return {"status": False, "message": "Sync is not running"}
+
+    # Mark as cancelled
+    SharePointSyncs.update_sync_by_id(
+        id,
+        SharePointSyncUpdateForm(
+            sync_status="cancelled",
+            sync_error="Sync was cancelled by user",
+        ),
+    )
+
+    return {"status": True, "message": "Sync cancelled"}
+
+
+############################
 # Delete SharePoint Sync
 ############################
 
@@ -124,11 +208,13 @@ async def delete_sharepoint_sync(id: str, user=Depends(get_verified_user)):
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
 
+    # Check access: owner, admin, or has write permission
     if sync.user_id != user.id and user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=ERROR_MESSAGES.UNAUTHORIZED,
-        )
+        if not SharePointSyncs.has_access_to_sync(id, user.id, "write"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.UNAUTHORIZED,
+            )
 
     result = SharePointSyncs.delete_sync_by_id(id)
 
@@ -150,6 +236,11 @@ class SyncExecuteForm(BaseModel):
     access_token: str
 
 
+class TokenExpiredError(Exception):
+    """Raised when the SharePoint access token has expired"""
+    pass
+
+
 async def retry_request(client, method: str, url: str, max_retries: int = 3, **kwargs):
     """Make an HTTP request with retry logic for transient SharePoint errors"""
     last_error = None
@@ -159,6 +250,18 @@ async def retry_request(client, method: str, url: str, max_retries: int = 3, **k
                 response = await client.get(url, **kwargs)
             else:
                 response = await client.post(url, **kwargs)
+            
+            # Check for expired token error (don't retry - need user to re-authenticate)
+            if response.status_code == 401:
+                try:
+                    error_data = response.json()
+                    error_code = error_data.get("error", {}).get("code", "")
+                    inner_code = error_data.get("error", {}).get("innerError", {}).get("code", "")
+                    if "expired" in error_code.lower() or "expired" in inner_code.lower() or error_code == "unauthenticated":
+                        raise TokenExpiredError("Access token has expired. Please click Sync again to re-authenticate.")
+                except (ValueError, KeyError):
+                    pass
+                raise TokenExpiredError("Authentication failed. Please click Sync again to re-authenticate.")
             
             # Check if SharePoint returned an HTML error page
             content_type = response.headers.get("content-type", "")
@@ -171,6 +274,9 @@ async def retry_request(client, method: str, url: str, max_retries: int = 3, **k
                 raise Exception("SharePoint returned HTML error page after all retries")
             
             return response
+        except TokenExpiredError:
+            # Don't retry token expiry errors
+            raise
         except httpx.TimeoutException as e:
             last_error = e
             log.warning(f"Request timeout, attempt {attempt + 1}/{max_retries}: {e}")
@@ -345,16 +451,38 @@ async def run_sync_in_background(
 
         log.info(f"[Sync {sync_id}] Found {len(files)} files in SharePoint folder")
         add_sync_log(sync_id, "info", f"Found {len(files)} files in SharePoint folder")
+        
+        # Set total files count for progress tracking
+        total_files = len(files)
+        SharePointSyncs.update_sync_by_id(
+            sync_id, 
+            SharePointSyncUpdateForm(sync_total=total_files, sync_progress=0)
+        )
 
         synced_count = 0
         skipped_count = 0
         errors = []
+        current_progress = 0
 
         for sp_file in files:
             try:
+                # Check if sync was cancelled
+                current_sync = SharePointSyncs.get_sync_by_id(sync_id)
+                if current_sync and current_sync.sync_status == "cancelled":
+                    log.info(f"[Sync {sync_id}] Sync was cancelled by user")
+                    add_sync_log(sync_id, "info", "Sync cancelled by user")
+                    return  # Exit the sync loop
+                
                 sp_item_id = sp_file["id"]
                 sp_last_modified = sp_file.get("lastModifiedDateTime")
                 file_name = sp_file.get("name", "unknown")
+                
+                # Update progress
+                current_progress += 1
+                SharePointSyncs.update_sync_by_id(
+                    sync_id, 
+                    SharePointSyncUpdateForm(sync_progress=current_progress)
+                )
                 
                 # Check if file already exists
                 if sp_item_id in existing_files:
@@ -457,6 +585,16 @@ async def run_sync_in_background(
         )
         log.info(f"[Sync {sync_id}] {completion_msg}")
 
+    except TokenExpiredError as e:
+        log.warning(f"[Sync {sync_id}] Token expired during sync")
+        add_sync_log(sync_id, "error", "Token expired - please click Sync to re-authenticate")
+        SharePointSyncs.update_sync_by_id(
+            sync_id,
+            SharePointSyncUpdateForm(
+                sync_status="token_expired",
+                sync_error="Access token expired. Please click Sync again to re-authenticate.",
+            ),
+        )
     except Exception as e:
         log.error(f"[Sync {sync_id}] Background sync failed: {e}")
         add_sync_log(sync_id, "error", f"Sync failed: {str(e)[:200]}")
@@ -486,11 +624,13 @@ async def execute_sharepoint_sync(
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
 
+    # Check access: owner, admin, or has write permission
     if sync.user_id != user.id and user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=ERROR_MESSAGES.UNAUTHORIZED,
-        )
+        if not SharePointSyncs.has_access_to_sync(id, user.id, "write"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.UNAUTHORIZED,
+            )
 
     # Check if already syncing
     if sync.sync_status == "syncing":
@@ -500,9 +640,14 @@ async def execute_sharepoint_sync(
             "sync_status": "syncing",
         }
 
-    # Update status to syncing immediately
+    # Update status to syncing immediately and reset progress
     SharePointSyncs.update_sync_by_id(
-        id, SharePointSyncUpdateForm(sync_status="syncing", sync_error=None)
+        id, SharePointSyncUpdateForm(
+            sync_status="syncing", 
+            sync_error=None,
+            sync_progress=0,
+            sync_total=0
+        )
     )
 
     # Add background task - runs after response is sent
@@ -538,19 +683,15 @@ async def get_sync_status(
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
 
+    # Check access: owner, admin, or has read permission
     if sync.user_id != user.id and user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=ERROR_MESSAGES.UNAUTHORIZED,
-        )
+        if not SharePointSyncs.has_access_to_sync(id, user.id, "read"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=ERROR_MESSAGES.UNAUTHORIZED,
+            )
 
-    return {
-        "id": sync.id,
-        "sync_status": sync.sync_status,
-        "sync_error": sync.sync_error,
-        "file_count": sync.file_count,
-        "last_sync_at": sync.last_sync_at,
-    }
+    return SharePointSyncModel.model_validate(sync)
 
 
 ############################

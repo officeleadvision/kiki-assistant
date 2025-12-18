@@ -22,7 +22,8 @@
 	let loaded = false;
 
 	$: showSharePoint =
-		$config?.features?.enable_onedrive_integration && $config?.features?.enable_onedrive_business;
+		$config?.features?.enable_onedrive_integration &&
+		($config?.features as any)?.enable_onedrive_business;
 
 	onMount(async () => {
 		if ($user?.role !== 'admin') {

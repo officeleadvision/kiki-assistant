@@ -125,7 +125,8 @@ class OneDriveConfig {
 // Retrieve OneDrive access token
 async function getToken(
 	resource?: string,
-	authorityType?: 'personal' | 'organizations'
+	authorityType?: 'personal' | 'organizations',
+	silentOnly?: boolean
 ): Promise<string> {
 	const config = OneDriveConfig.getInstance();
 	await config.ensureInitialized(authorityType);
@@ -145,6 +146,10 @@ async function getToken(
 		const resp = await msalInstance.acquireTokenSilent(authParams);
 		accessToken = resp.accessToken;
 	} catch {
+		// If silentOnly mode, don't show popup - return empty token
+		if (silentOnly) {
+			return '';
+		}
 		const msalInstance = await config.getMsalInstance(authorityType);
 		try {
 			const resp = await msalInstance.loginPopup(authParams);
@@ -161,11 +166,27 @@ async function getToken(
 		}
 	}
 
-	if (!accessToken) {
+	if (!accessToken && !silentOnly) {
 		throw new Error('Failed to acquire access token');
 	}
 
 	return accessToken;
+}
+
+// Try to silently refresh token without user interaction
+export async function tryRefreshSharePointToken(): Promise<string | null> {
+	try {
+		const config = OneDriveConfig.getInstance();
+		await config.ensureInitialized('organizations');
+		const sharepointUrl = config.getSharepointUrl();
+		const resource = sharepointUrl
+			? `https://${sharepointUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}`
+			: undefined;
+		const token = await getToken(resource, 'organizations', true);
+		return token || null;
+	} catch {
+		return null;
+	}
 }
 
 interface PickerParams {

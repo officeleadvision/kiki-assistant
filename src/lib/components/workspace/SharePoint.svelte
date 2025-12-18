@@ -15,11 +15,14 @@
 		deleteSharePointSync,
 		executeSharePointSync,
 		getSyncStatus,
+		updateSharePointSync,
+		cancelSharePointSync,
 		type SharePointSync
 	} from '$lib/apis/sharepoint';
 	import {
 		openSharePointFolderPicker,
 		getSharePointAccessToken,
+		tryRefreshSharePointToken,
 		type SharePointFolderInfo
 	} from '$lib/utils/onedrive-file-picker';
 
@@ -31,6 +34,7 @@
 	import ArrowPath from '../icons/ArrowPath.svelte';
 	import FolderOpen from '../icons/FolderOpen.svelte';
 	import Cloud from '../icons/Cloud.svelte';
+	import AccessControlModal from './common/AccessControlModal.svelte';
 
 	let loaded = false;
 	let syncs: SharePointSync[] = [];
@@ -41,7 +45,10 @@
 
 	let showCreateModal = false;
 	let showLogsModal = false;
+	let showAccessControlModal = false;
+	let accessControlSync: SharePointSync | null = null;
 	let logsSync: SharePointSync | null = null;
+	let logsPollingInterval: ReturnType<typeof setInterval> | null = null;
 	let creating = false;
 	let syncingIds: Set<string> = new Set();
 
@@ -123,6 +130,93 @@
 		}
 	};
 
+	const openAccessControlModal = (sync: SharePointSync) => {
+		accessControlSync = sync;
+		showAccessControlModal = true;
+	};
+
+	const handleAccessControlChange = async (newAccessControl: Record<string, any> | null) => {
+		if (!accessControlSync) return;
+		try {
+			const result = await updateSharePointSync(localStorage.token, accessControlSync.id, {
+				access_control: newAccessControl
+			});
+			if (result) {
+				syncs = syncs.map((s) => (s.id === accessControlSync!.id ? result : s));
+				accessControlSync = result;
+			}
+		} catch (e) {
+			toast.error(`${e}`);
+		}
+	};
+
+	const handleCancelSync = async (sync: SharePointSync) => {
+		try {
+			const result = await cancelSharePointSync(localStorage.token, sync.id);
+			if (result.status) {
+				toast.success($i18n.t('Sync cancelled'));
+				syncs = syncs.map((s) => (s.id === sync.id ? { ...s, sync_status: 'cancelled' } : s));
+				syncingIds.delete(sync.id);
+				syncingIds = syncingIds;
+				stopPolling(sync.id);
+			}
+		} catch (e) {
+			toast.error(`${e}`);
+		}
+	};
+
+	// Open logs modal and fetch fresh data
+	const openLogsModal = async (sync: SharePointSync) => {
+		logsSync = sync;
+		showLogsModal = true;
+
+		// Fetch fresh data immediately
+		try {
+			const freshData = await getSyncStatus(localStorage.token, sync.id);
+			if (freshData) {
+				logsSync = freshData;
+				// Also update in syncs array
+				syncs = syncs.map((s) => (s.id === sync.id ? freshData : s));
+			}
+		} catch (e) {
+			console.error('Error fetching sync status:', e);
+		}
+
+		// Start polling for this modal if sync is in progress
+		startLogsPolling(sync.id);
+	};
+
+	const closeLogsModal = () => {
+		showLogsModal = false;
+		logsSync = null;
+		stopLogsPolling();
+	};
+
+	const startLogsPolling = (syncId: string) => {
+		// Clear any existing logs polling
+		stopLogsPolling();
+
+		logsPollingInterval = setInterval(async () => {
+			try {
+				const status = await getSyncStatus(localStorage.token, syncId);
+				if (status) {
+					logsSync = status;
+					// Also update in syncs array
+					syncs = syncs.map((s) => (s.id === syncId ? status : s));
+				}
+			} catch (e) {
+				console.error('Error polling logs:', e);
+			}
+		}, 2000); // Poll every 2 seconds
+	};
+
+	const stopLogsPolling = () => {
+		if (logsPollingInterval) {
+			clearInterval(logsPollingInterval);
+			logsPollingInterval = null;
+		}
+	};
+
 	// Polling intervals for status checks
 	let pollIntervals: Map<string, ReturnType<typeof setInterval>> = new Map();
 
@@ -133,31 +227,14 @@
 		const interval = setInterval(async () => {
 			try {
 				const status = await getSyncStatus(localStorage.token, syncId);
+				if (!status) return;
 
 				// Update the sync in our local list
-				syncs = syncs.map((s) =>
-					s.id === syncId
-						? {
-								...s,
-								sync_status: status.sync_status,
-								sync_error: status.sync_error,
-								file_count: status.file_count,
-								last_sync_at: status.last_sync_at,
-								sync_logs: status.sync_logs
-							}
-						: s
-				);
+				syncs = syncs.map((s) => (s.id === syncId ? status : s));
 
 				// Also update the logs modal if it's open for this sync
 				if (logsSync && logsSync.id === syncId) {
-					logsSync = {
-						...logsSync,
-						sync_status: status.sync_status,
-						sync_error: status.sync_error,
-						file_count: status.file_count,
-						last_sync_at: status.last_sync_at,
-						sync_logs: status.sync_logs
-					};
+					logsSync = status;
 				}
 
 				// If sync is complete, stop polling
@@ -197,12 +274,28 @@
 		syncingIds = syncingIds;
 
 		try {
-			const accessToken = await getSharePointAccessToken();
+			// Try silent token refresh first (no popup)
+			let accessToken = await tryRefreshSharePointToken();
+
+			// If silent refresh fails, use interactive method
+			if (!accessToken) {
+				accessToken = await getSharePointAccessToken();
+			}
+
 			const result = await executeSharePointSync(localStorage.token, sync.id, accessToken);
 
 			if (result.status) {
-				// Update local sync status immediately
-				syncs = syncs.map((s) => (s.id === sync.id ? { ...s, sync_status: 'syncing' } : s));
+				// Update local sync status immediately and reset progress
+				syncs = syncs.map((s) =>
+					s.id === sync.id
+						? {
+								...s,
+								sync_status: 'syncing',
+								sync_progress: 0,
+								sync_total: 0
+							}
+						: s
+				);
 
 				toast.info($i18n.t('Sync started in background. You can leave this page.'));
 
@@ -220,6 +313,7 @@
 	onDestroy(() => {
 		pollIntervals.forEach((interval) => clearInterval(interval));
 		pollIntervals.clear();
+		stopLogsPolling();
 	});
 
 	const resetCreateForm = () => {
@@ -263,6 +357,17 @@
 			}
 		}}
 	/>
+
+	{#if accessControlSync}
+		<AccessControlModal
+			bind:show={showAccessControlModal}
+			bind:accessControl={accessControlSync.access_control}
+			accessRoles={['read', 'write']}
+			onChange={() => {
+				handleAccessControlChange(accessControlSync?.access_control ?? null);
+			}}
+		/>
+	{/if}
 
 	<!-- Create Sync Modal -->
 	{#if showCreateModal}
@@ -372,14 +477,10 @@
 	{#if showLogsModal && logsSync}
 		<div
 			class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-			on:click={() => {
-				showLogsModal = false;
-				logsSync = null;
-			}}
+			on:click={closeLogsModal}
 			on:keydown={(e) => {
 				if (e.key === 'Escape') {
-					showLogsModal = false;
-					logsSync = null;
+					closeLogsModal();
 				}
 			}}
 		>
@@ -392,10 +493,7 @@
 					<h2 class="text-lg font-semibold">{logsSync.name} - {$i18n.t('Sync Logs')}</h2>
 					<button
 						class="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
-						on:click={() => {
-							showLogsModal = false;
-							logsSync = null;
-						}}
+						on:click={closeLogsModal}
 					>
 						<svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
@@ -444,6 +542,26 @@
 					</div>
 					{#if logsSync.sync_error}
 						<div class="mt-2 text-red-600 text-xs">{$i18n.t('Error')}: {logsSync.sync_error}</div>
+					{/if}
+
+					<!-- Progress Bar -->
+					{#if logsSync.sync_status === 'syncing' && logsSync.sync_total > 0}
+						<div class="mt-3">
+							<div class="flex justify-between text-xs text-gray-500 mb-1">
+								<span>{$i18n.t('Progress')}</span>
+								<span
+									>{logsSync.sync_progress} / {logsSync.sync_total} ({Math.round(
+										(logsSync.sync_progress / logsSync.sync_total) * 100
+									)}%)</span
+								>
+							</div>
+							<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+								<div
+									class="bg-blue-500 h-2 rounded-full transition-all duration-300"
+									style="width: {(logsSync.sync_progress / logsSync.sync_total) * 100}%"
+								></div>
+							</div>
+						</div>
 					{/if}
 				</div>
 
@@ -498,10 +616,7 @@
 				<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
 					<button
 						class="px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-						on:click={() => {
-							showLogsModal = false;
-							logsSync = null;
-						}}
+						on:click={closeLogsModal}
 					>
 						{$i18n.t('Close')}
 					</button>
@@ -524,7 +639,7 @@
 			</div>
 
 			<div class="flex w-full justify-end gap-1.5">
-				{#if $config?.features?.enable_onedrive_integration && $config?.features?.enable_onedrive_business}
+				{#if $config?.features?.enable_onedrive_integration && ($config?.features as any)?.enable_onedrive_business}
 					<button
 						class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 						on:click={() => {
@@ -539,7 +654,7 @@
 		</div>
 	</div>
 
-	{#if !$config?.features?.enable_onedrive_integration || !$config?.features?.enable_onedrive_business}
+	{#if !$config?.features?.enable_onedrive_integration || !($config?.features as any)?.enable_onedrive_business}
 		<div
 			class="py-8 px-4 bg-white dark:bg-gray-900 rounded-3xl border border-gray-100/30 dark:border-gray-850/30"
 		>
@@ -585,21 +700,12 @@
 						<div class="flex items-start gap-3">
 							<button
 								class="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition"
-								on:click={() => {
-									logsSync = sync;
-									showLogsModal = true;
-								}}
+								on:click={() => openLogsModal(sync)}
 							>
 								<FolderOpen className="size-5 text-blue-500" />
 							</button>
 
-							<button
-								class="flex-1 min-w-0 text-left"
-								on:click={() => {
-									logsSync = sync;
-									showLogsModal = true;
-								}}
-							>
+							<button class="flex-1 min-w-0 text-left" on:click={() => openLogsModal(sync)}>
 								<div class="flex items-center gap-2">
 									<span class="font-medium hover:text-blue-500 transition">{sync.name}</span>
 									{#if sync.sync_status === 'syncing'}
@@ -607,7 +713,11 @@
 											class="px-2 py-0.5 text-xs bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded-full flex items-center gap-1"
 										>
 											<Spinner className="size-3" />
-											{$i18n.t('Syncing...')}
+											{#if sync.sync_total > 0}
+												{Math.round((sync.sync_progress / sync.sync_total) * 100)}%
+											{:else}
+												{$i18n.t('Syncing...')}
+											{/if}
 										</span>
 									{:else if sync.sync_status === 'synced'}
 										<span
@@ -621,6 +731,34 @@
 												/>
 											</svg>
 											{$i18n.t('Synced')}
+										</span>
+									{:else if sync.sync_status === 'token_expired'}
+										<Tooltip content={$i18n.t('Click Sync to re-authenticate')}>
+											<span
+												class="px-2 py-0.5 text-xs bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded-full cursor-help flex items-center gap-1"
+											>
+												<svg class="size-3" viewBox="0 0 20 20" fill="currentColor">
+													<path
+														fill-rule="evenodd"
+														d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+														clip-rule="evenodd"
+													/>
+												</svg>
+												{$i18n.t('Token Expired')}
+											</span>
+										</Tooltip>
+									{:else if sync.sync_status === 'cancelled'}
+										<span
+											class="px-2 py-0.5 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full flex items-center gap-1"
+										>
+											<svg class="size-3" viewBox="0 0 20 20" fill="currentColor">
+												<path
+													fill-rule="evenodd"
+													d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+													clip-rule="evenodd"
+												/>
+											</svg>
+											{$i18n.t('Cancelled')}
 										</span>
 									{:else if sync.sync_status === 'error'}
 										<Tooltip content={sync.sync_error || ''}>
@@ -653,20 +791,90 @@
 							</button>
 
 							<div class="flex items-center gap-1">
-								<Tooltip content={$i18n.t('Sync Now')}>
-									<button
-										class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition disabled:opacity-50"
-										disabled={syncingIds.has(sync.id) || sync.sync_status === 'syncing'}
-										on:click={() => handleExecuteSync(sync)}
-									>
-										{#if syncingIds.has(sync.id)}
-											<Spinner className="size-4" />
-										{:else}
-											<ArrowPath className="size-4" />
-										{/if}
-									</button>
-								</Tooltip>
+								<!-- Play/Sync button -->
+								{#if sync.sync_status !== 'syncing'}
+									<Tooltip content={$i18n.t('Sync Now')}>
+										<button
+											class="p-2 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 rounded-lg transition disabled:opacity-50"
+											disabled={syncingIds.has(sync.id)}
+											on:click={() => handleExecuteSync(sync)}
+										>
+											{#if syncingIds.has(sync.id)}
+												<Spinner className="size-4" />
+											{:else}
+												<!-- Play icon -->
+												<svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+													<path
+														fill-rule="evenodd"
+														d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+														clip-rule="evenodd"
+													/>
+												</svg>
+											{/if}
+										</button>
+									</Tooltip>
+								{:else}
+									<!-- Stop/Cancel button when syncing -->
+									<Tooltip content={$i18n.t('Cancel Sync')}>
+										<button
+											class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition"
+											on:click={() => handleCancelSync(sync)}
+										>
+											<!-- Stop icon -->
+											<svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
+												<path
+													fill-rule="evenodd"
+													d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
+													clip-rule="evenodd"
+												/>
+											</svg>
+										</button>
+									</Tooltip>
+								{/if}
 
+								<!-- Access Control button (only for owners/admins) -->
+								{#if sync.user_id === $user?.id || $user?.role === 'admin'}
+									<Tooltip content={$i18n.t('Access Control')}>
+										<button
+											class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+											on:click={() => openAccessControlModal(sync)}
+										>
+											{#if sync.access_control === null}
+												<!-- Public (unlocked) icon -->
+												<svg
+													class="size-4 text-green-500"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+													/>
+												</svg>
+											{:else}
+												<!-- Private (locked) icon -->
+												<svg
+													class="size-4 text-gray-500"
+													fill="none"
+													stroke="currentColor"
+													viewBox="0 0 24 24"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+													/>
+												</svg>
+											{/if}
+										</button>
+									</Tooltip>
+								{/if}
+
+								<!-- Delete button -->
 								<Tooltip content={$i18n.t('Delete')}>
 									<button
 										class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition"

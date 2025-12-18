@@ -21,6 +21,9 @@ export interface SharePointSync {
 	sync_status: string;
 	sync_error: string | null;
 	sync_logs: SyncLogEntry[] | null;
+	sync_progress: number;
+	sync_total: number;
+	access_control: Record<string, any> | null;
 	created_at: number;
 	updated_at: number;
 }
@@ -153,6 +156,70 @@ export const deleteSharePointSync = async (token: string, id: string): Promise<b
 	return res?.status ?? false;
 };
 
+export const updateSharePointSync = async (
+	token: string,
+	id: string,
+	data: { name?: string; access_control?: Record<string, any> | null }
+): Promise<SharePointSync | null> => {
+	let error = null;
+
+	const res = await fetch(`${WEBUI_API_BASE_URL}/sharepoint/${id}/update`, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			authorization: `Bearer ${token}`
+		},
+		body: JSON.stringify(data)
+	})
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
+		})
+		.catch((err) => {
+			error = err.detail;
+			console.error(err);
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res;
+};
+
+export const cancelSharePointSync = async (
+	token: string,
+	id: string
+): Promise<{ status: boolean; message: string }> => {
+	let error = null;
+
+	const res = await fetch(`${WEBUI_API_BASE_URL}/sharepoint/${id}/cancel`, {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
+			authorization: `Bearer ${token}`
+		}
+	})
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
+		})
+		.catch((err) => {
+			error = err.detail;
+			console.error(err);
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res ?? { status: false, message: 'Unknown error' };
+};
+
 export const executeSharePointSync = async (
 	token: string,
 	id: string,
@@ -189,13 +256,7 @@ export const executeSharePointSync = async (
 export const getSyncStatus = async (
 	token: string,
 	id: string
-): Promise<{
-	id: string;
-	sync_status: string;
-	sync_error: string | null;
-	file_count: number;
-	last_sync_at: number | null;
-}> => {
+): Promise<SharePointSync | null> => {
 	let error = null;
 
 	const res = await fetch(`${WEBUI_API_BASE_URL}/sharepoint/${id}/status`, {

@@ -10,6 +10,9 @@ from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, String, Text
 from open_webui.internal.db import JSONField
 
+from open_webui.utils.access_control import has_access
+from open_webui.models.groups import Groups
+
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
@@ -39,6 +42,13 @@ class SharePointSync(Base):
     sync_status = Column(Text, default="idle")  # idle, syncing, synced, error
     sync_error = Column(Text, nullable=True)
     sync_logs = Column(JSONField, nullable=True)  # List of log entries
+    sync_progress = Column(BigInteger, default=0)  # Current file being processed
+    sync_total = Column(BigInteger, default=0)  # Total files to process
+
+    access_control = Column(JSONField, nullable=True)  # Controls data access levels
+    # - `None`: Public access, available to all users with the "user" role.
+    # - `{}`: Private access, only accessible by the owner.
+    # - `{"read": {"group_ids": ["group_id"]}}`: Read access for specific groups
 
     created_at = Column(BigInteger)
     updated_at = Column(BigInteger)
@@ -49,7 +59,7 @@ class SharePointSyncModel(BaseModel):
 
     id: str
     user_id: str
-    name: str
+    name: Optional[str] = ""  # Allow None, default to empty string
     knowledge_id: str
 
     drive_id: str
@@ -62,6 +72,10 @@ class SharePointSyncModel(BaseModel):
     sync_status: str = "idle"
     sync_error: Optional[str] = None
     sync_logs: Optional[List[dict]] = None
+    sync_progress: int = 0
+    sync_total: int = 0
+
+    access_control: Optional[dict] = None
 
     created_at: int
     updated_at: int
@@ -79,6 +93,7 @@ class SharePointSyncForm(BaseModel):
     item_id: str
     folder_path: str
     sharepoint_endpoint: str
+    access_control: Optional[dict] = None
 
 
 class SharePointSyncUpdateForm(BaseModel):
@@ -88,6 +103,9 @@ class SharePointSyncUpdateForm(BaseModel):
     sync_status: Optional[str] = None
     sync_error: Optional[str] = None
     sync_logs: Optional[List[dict]] = None
+    sync_progress: Optional[int] = None
+    sync_total: Optional[int] = None
+    access_control: Optional[dict] = None
 
 
 ####################
@@ -114,6 +132,7 @@ class SharePointSyncsTable:
                 file_count=0,
                 sync_status="idle",
                 sync_error=None,
+                access_control=form_data.access_control,
                 created_at=int(time.time()),
                 updated_at=int(time.time()),
             )
@@ -125,8 +144,7 @@ class SharePointSyncsTable:
                 db.refresh(result)
                 if result:
                     return SharePointSyncModel.model_validate(result)
-                else:
-                    return None
+                return None
             except Exception as e:
                 log.exception(f"Error creating SharePoint sync: {e}")
                 return None
@@ -141,18 +159,57 @@ class SharePointSyncsTable:
             except Exception:
                 return None
 
-    def get_syncs_by_user_id(self, user_id: str) -> List[SharePointSyncModel]:
+    def get_all_syncs(self) -> List[SharePointSyncModel]:
+        """Get all syncs (admin only)"""
         with get_db() as db:
             try:
                 syncs = (
                     db.query(SharePointSync)
-                    .filter_by(user_id=user_id)
                     .order_by(SharePointSync.updated_at.desc())
                     .all()
                 )
                 return [SharePointSyncModel.model_validate(sync) for sync in syncs]
-            except Exception:
+            except Exception as e:
+                log.exception(f"Error getting all syncs: {e}")
                 return []
+
+    def get_syncs_by_user_id(
+        self, user_id: str, permission: str = "read"
+    ) -> List[SharePointSyncModel]:
+        """Get all syncs that a user has access to (owned or has permission)"""
+        with get_db() as db:
+            try:
+                syncs = (
+                    db.query(SharePointSync)
+                    .order_by(SharePointSync.updated_at.desc())
+                    .all()
+                )
+                user_group_ids = {
+                    group.id for group in Groups.get_groups_by_member_id(user_id)
+                }
+                return [
+                    SharePointSyncModel.model_validate(sync)
+                    for sync in syncs
+                    if sync.user_id == user_id
+                    or has_access(user_id, permission, sync.access_control, user_group_ids)
+                ]
+            except Exception as e:
+                log.exception(f"Error getting syncs for user {user_id}: {e}")
+                return []
+
+    def has_access_to_sync(
+        self, sync_id: str, user_id: str, permission: str = "read"
+    ) -> bool:
+        """Check if a user has access to a specific sync"""
+        sync = self.get_sync_by_id(sync_id)
+        if not sync:
+            return False
+        if sync.user_id == user_id:
+            return True
+        user_group_ids = {
+            group.id for group in Groups.get_groups_by_member_id(user_id)
+        }
+        return has_access(user_id, permission, sync.access_control, user_group_ids)
 
     def get_syncs_by_knowledge_id(self, knowledge_id: str) -> List[SharePointSyncModel]:
         with get_db() as db:
@@ -222,6 +279,9 @@ def ensure_sharepoint_sync_table():
             # Define columns that might be missing (added in updates)
             columns_to_check = {
                 "sync_logs": "TEXT",  # JSON stored as TEXT
+                "sync_progress": "INTEGER DEFAULT 0",
+                "sync_total": "INTEGER DEFAULT 0",
+                "access_control": "TEXT",  # JSON stored as TEXT
             }
             
             with engine.connect() as conn:
