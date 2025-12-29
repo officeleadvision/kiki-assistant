@@ -94,6 +94,7 @@ from open_webui.routers import (
     utils,
     scim,
     sharepoint,
+    emails,
 )
 
 from open_webui.routers.retrieval import (
@@ -1393,6 +1394,7 @@ app.include_router(knowledge.router, prefix="/api/v1/knowledge", tags=["knowledg
 app.include_router(prompts.router, prefix="/api/v1/prompts", tags=["prompts"])
 app.include_router(tools.router, prefix="/api/v1/tools", tags=["tools"])
 app.include_router(sharepoint.router, prefix="/api/v1/sharepoint", tags=["sharepoint"])
+app.include_router(emails.router, prefix="/api/v1/emails", tags=["emails"])
 
 app.include_router(memories.router, prefix="/api/v1/memories", tags=["memories"])
 app.include_router(folders.router, prefix="/api/v1/folders", tags=["folders"])

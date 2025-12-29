@@ -137,6 +137,17 @@
 								{$i18n.t('SharePoint')}
 							</a>
 						{/if}
+
+						{#if $user?.role === 'admin' || $user?.permissions?.workspace?.knowledge}
+							<a
+								class="min-w-fit p-1.5 {$page.url.pathname.includes('/workspace/emails')
+									? ''
+									: 'text-gray-500 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+								href="/workspace/emails"
+							>
+								{$i18n.t('Emails')}
+							</a>
+						{/if}
 					</div>
 				</div>
 
