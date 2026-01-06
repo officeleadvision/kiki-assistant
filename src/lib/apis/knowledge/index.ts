@@ -72,6 +72,11 @@ export const getKnowledgeBases = async (token: string = '', page: number | null 
 	return res;
 };
 
+export const getKnowledgeBaseList = async (token: string = '', page: number | null = null) => {
+	const result = await getKnowledgeBases(token, page);
+	return result?.items ?? [];
+};
+
 export const searchKnowledgeBases = async (
 	token: string = '',
 	query: string | null = null,

@@ -32,7 +32,6 @@ from open_webui.models.emails import (
 )
 
 from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import SRC_LOG_LEVELS
 
 from open_webui.utils.models import get_all_models, get_filtered_models
 from open_webui.utils.chat import generate_chat_completion
@@ -40,7 +39,6 @@ from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.utils.access_control import has_access, has_permission
 
 log = logging.getLogger(__name__)
-log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
 router = APIRouter()
 
@@ -611,6 +609,19 @@ async def get_webhook_info(
     base_url = str(request.base_url).rstrip('/')
     webhook_url = f"{base_url}/api/v1/emails/webhook/{mailbox.webhook_token}"
     
+    body_template = {
+        "email_id": "@{triggerOutputs()?['body/id']}",
+        "subject": "@{triggerOutputs()?['body/subject']}",
+        "sender": "@{triggerOutputs()?['body/from']}",
+        "sender_name": "@{triggerOutputs()?['body/from']}",
+        "body": "@{triggerOutputs()?['body/body']}",
+        "body_preview": "@{triggerOutputs()?['body/bodyPreview']}",
+        "has_attachments": "@{triggerOutputs()?['body/hasAttachments']}",
+        "received_at": "@{triggerOutputs()?['body/receivedDateTime']}",
+        "importance": "@{triggerOutputs()?['body/importance']}",
+    }
+    body_template_text = json.dumps(body_template, indent=2)
+
     return {
         "webhook_url": webhook_url,
         "webhook_token": mailbox.webhook_token,
@@ -625,17 +636,8 @@ async def get_webhook_info(
                 "6. Set Content-Type header to: application/json",
                 "7. Use the following body template (copy and customize):",
             ],
-            "body_template": {
-                "email_id": "@{triggerOutputs()?['body/id']}",
-                "subject": "@{triggerOutputs()?['body/subject']}",
-                "sender": "@{triggerOutputs()?['body/from']}",
-                "sender_name": "@{triggerOutputs()?['body/from']}",
-                "body": "@{triggerOutputs()?['body/body']}",
-                "body_preview": "@{triggerOutputs()?['body/bodyPreview']}",
-                "has_attachments": "@{triggerOutputs()?['body/hasAttachments']}",
-                "received_at": "@{triggerOutputs()?['body/receivedDateTime']}",
-                "importance": "@{triggerOutputs()?['body/importance']}",
-            },
+            "body_template": body_template,
+            "body_template_text": body_template_text,
         },
     }
 

@@ -1,25 +1,21 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui';
 	import { flyAndScale } from '$lib/utils/transitions';
-	import { getContext, createEventDispatcher } from 'svelte';
-	const dispatch = createEventDispatcher();
+import { getContext, createEventDispatcher } from 'svelte';
+const dispatch = createEventDispatcher();
 
-	import Dropdown from '$lib/components/common/Dropdown.svelte';
-	import Tooltip from '$lib/components/common/Tooltip.svelte';
-	import ArrowUpCircle from '$lib/components/icons/ArrowUpCircle.svelte';
-	import BarsArrowUp from '$lib/components/icons/BarsArrowUp.svelte';
-	import FolderOpen from '$lib/components/icons/FolderOpen.svelte';
-	import ArrowPath from '$lib/components/icons/ArrowPath.svelte';
-	import GlobeAlt from '$lib/components/icons/GlobeAlt.svelte';
+import Dropdown from '$lib/components/common/Dropdown.svelte';
+import Tooltip from '$lib/components/common/Tooltip.svelte';
+import ArrowUpCircle from '$lib/components/icons/ArrowUpCircle.svelte';
+import BarsArrowUp from '$lib/components/icons/BarsArrowUp.svelte';
+import FolderOpen from '$lib/components/icons/FolderOpen.svelte';
+import ArrowPath from '$lib/components/icons/ArrowPath.svelte';
+import GlobeAlt from '$lib/components/icons/GlobeAlt.svelte';
 
-	const i18n = getContext('i18n');
+const i18n = getContext('i18n');
 
-	export let onClose: Function = () => {};
-
-	export let onSync: Function = () => {};
-	export let onUpload: Function = (data) => {};
-
-	let show = false;
+export let onClose: Function = () => {};
+let show = false;
 </script>
 
 <Dropdown
@@ -63,7 +59,7 @@
 			<DropdownMenu.Item
 				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
 				on:click={() => {
-					onUpload({ type: 'files' });
+					dispatch('upload', { type: 'files' });
 				}}
 			>
 				<ArrowUpCircle strokeWidth="2" />
@@ -73,7 +69,7 @@
 			<DropdownMenu.Item
 				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
 				on:click={() => {
-					onUpload({ type: 'directory' });
+					dispatch('upload', { type: 'directory' });
 				}}
 			>
 				<FolderOpen strokeWidth="2" />
@@ -88,9 +84,9 @@
 			>
 				<DropdownMenu.Item
 					class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
-					on:click={() => {
-						onSync();
-					}}
+				on:click={() => {
+					dispatch('sync');
+				}}
 				>
 					<ArrowPath strokeWidth="2" />
 					<div class="flex items-center">{$i18n.t('Sync directory')}</div>
@@ -100,7 +96,7 @@
 			<DropdownMenu.Item
 				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
 				on:click={() => {
-					onUpload({ type: 'web' });
+					dispatch('upload', { type: 'web' });
 				}}
 			>
 				<GlobeAlt strokeWidth="2" />
@@ -110,7 +106,7 @@
 			<DropdownMenu.Item
 				class="flex gap-2 items-center px-3 py-1.5 text-sm  cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  rounded-xl"
 				on:click={() => {
-					onUpload({ type: 'text' });
+					dispatch('upload', { type: 'text' });
 				}}
 			>
 				<BarsArrowUp strokeWidth="2" />

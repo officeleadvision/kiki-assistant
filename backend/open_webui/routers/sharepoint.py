@@ -27,11 +27,9 @@ from open_webui.constants import ERROR_MESSAGES
 from open_webui.utils.auth import get_verified_user
 from open_webui.utils.access_control import has_access
 
-from open_webui.env import SRC_LOG_LEVELS
 from open_webui.config import UPLOAD_DIR
 
 log = logging.getLogger(__name__)
-log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
 router = APIRouter()
 

@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Callable, Optional, Sequence, Union
 import json
 import aiohttp
-import mimeparse
 
 
 import collections.abc
@@ -607,6 +606,35 @@ def throttle(interval: float = 10.0):
     return decorator
 
 
+def _parse_mime_type(mime_type: str) -> tuple[str, str, dict]:
+    parts = [p.strip() for p in mime_type.split(";") if p.strip()]
+    if not parts:
+        return "", "", {}
+
+    type_part = parts[0]
+    params: dict[str, str] = {}
+    for param in parts[1:]:
+        if "=" in param:
+            key, value = param.split("=", 1)
+            params[key.strip()] = value.strip()
+
+    if "/" not in type_part:
+        return "", "", params
+
+    main, sub = [p.strip() for p in type_part.split("/", 1)]
+    return main, sub, params
+
+
+def _matches_mime_type(
+    supported_main: str, supported_sub: str, header_main: str, header_sub: str
+) -> bool:
+    if supported_main != "*" and supported_main != header_main:
+        return False
+    if supported_sub != "*" and supported_sub != header_sub:
+        return False
+    return True
+
+
 def strict_match_mime_type(supported: list[str] | str, header: str) -> Optional[str]:
     """
     Strictly match the mime type with the supported mime types.
@@ -626,17 +654,21 @@ def strict_match_mime_type(supported: list[str] | str, header: str) -> Optional[
             # Default to common types if none are specified
             supported = ["audio/*", "video/webm"]
 
-        match = mimeparse.best_match(supported, header)
-        if not match:
+        header_main, header_sub, header_params = _parse_mime_type(header)
+        if not header_main or not header_sub:
             return None
 
-        _, _, match_params = mimeparse.parse_mime_type(match)
-        _, _, header_params = mimeparse.parse_mime_type(header)
-        for k, v in match_params.items():
-            if header_params.get(k) != v:
-                return None
+        for mime in supported:
+            main, sub, supported_params = _parse_mime_type(mime)
+            if not main or not sub:
+                continue
+            if not _matches_mime_type(main, sub, header_main, header_sub):
+                continue
+            if any(header_params.get(k) != v for k, v in supported_params.items()):
+                continue
+            return mime.strip()
 
-        return match
+        return None
     except Exception as e:
         log.exception(f"Failed to match mime type {header}: {e}")
         return None

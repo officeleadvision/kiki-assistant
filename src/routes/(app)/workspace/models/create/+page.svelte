@@ -65,8 +65,8 @@
 		window.addEventListener('message', async (event) => {
 			if (
 				![
-					'https://Lead Me.com',
-					'https://www.Lead Me.com',
+					'https://app.leadme.bg',
+					'https://www.app.leadme.bg',
 					'https://openwebui.com',
 					'https://www.openwebui.com',
 					'http://localhost:5173',

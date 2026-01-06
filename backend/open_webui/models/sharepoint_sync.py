@@ -4,7 +4,6 @@ from typing import Optional, List
 import uuid
 
 from open_webui.internal.db import Base, get_db
-from open_webui.env import SRC_LOG_LEVELS
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import BigInteger, Column, String, Text
@@ -14,7 +13,6 @@ from open_webui.utils.access_control import has_access
 from open_webui.models.groups import Groups
 
 log = logging.getLogger(__name__)
-log.setLevel(SRC_LOG_LEVELS["MODELS"])
 
 ####################
 # SharePointSync DB Schema

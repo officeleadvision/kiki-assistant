@@ -2,11 +2,12 @@
 	import dayjs from '$lib/dayjs';
 	import duration from 'dayjs/plugin/duration';
 	import relativeTime from 'dayjs/plugin/relativeTime';
+	import { createEventDispatcher, getContext } from 'svelte';
 
 	dayjs.extend(duration);
 	dayjs.extend(relativeTime);
 
-	import { getContext } from 'svelte';
+	const dispatch = createEventDispatcher();
 	const i18n = getContext('i18n');
 
 	import { capitalizeFirstLetter, formatFileSize } from '$lib/utils';
@@ -19,9 +20,6 @@
 	export let knowledge = null;
 	export let selectedFileId = null;
 	export let files = [];
-
-	export let onClick = (fileId) => {};
-	export let onDelete = (fileId) => {};
 </script>
 
 <div class=" max-h-full flex flex-col w-full gap-[0.5px]">
@@ -34,9 +32,8 @@
 			<button
 				class="relative group flex items-center gap-1 rounded-xl p-2 text-left flex-1 justify-between"
 				type="button"
-				on:click={async () => {
-					console.log(file);
-					onClick(file?.id ?? file?.tempId);
+				on:click={() => {
+					dispatch('click', file?.id ?? file?.tempId);
 				}}
 			>
 				<div class="">
@@ -92,7 +89,7 @@
 							class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-850 transition"
 							type="button"
 							on:click={() => {
-								onDelete(file?.id ?? file?.tempId);
+								dispatch('delete', file?.id ?? file?.tempId);
 							}}
 						>
 							<XMark />

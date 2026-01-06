@@ -55,13 +55,14 @@
 	import { getChannels, createNewChannel } from '$lib/apis/channels';
 	import ChannelModal from './Sidebar/ChannelModal.svelte';
 	import ChannelItem from './Sidebar/ChannelItem.svelte';
-	import PencilSquare from '../icons/PencilSquare.svelte';
-	import Search from '../icons/Search.svelte';
+import PencilSquare from '../icons/PencilSquare.svelte';
+import Search from '../icons/Search.svelte';
 	import SearchModal from './SearchModal.svelte';
 	import FolderModal from './Sidebar/Folders/FolderModal.svelte';
 	import Sidebar from '../icons/Sidebar.svelte';
 	import PinnedModelList from './Sidebar/PinnedModelList.svelte';
 	import Note from '../icons/Note.svelte';
+import Document from '../icons/Document.svelte';
 	import { slide } from 'svelte/transition';
 	import HotkeyHint from '../common/HotkeyHint.svelte';
 	import { key } from 'vega';
@@ -632,7 +633,7 @@
 	id="sidebar-new-chat-button"
 	class="hidden"
 	on:click={() => {
-		goto('/');
+		goto('/chat');
 		newChatHandler();
 	}}
 />
@@ -691,13 +692,13 @@
 					<Tooltip content={$i18n.t('New Chat')} placement="right">
 						<a
 							class=" cursor-pointer flex rounded-xl hover:bg-primary-50 transition group"
-							href="/"
+							href="/chat"
 							draggable="false"
 							on:click={async (e) => {
 								e.stopImmediatePropagation();
 								e.preventDefault();
 
-								goto('/');
+								goto('/chat');
 								newChatHandler();
 							}}
 							aria-label={$i18n.t('New Chat')}
@@ -863,9 +864,14 @@
 			>
 				<a
 					class="flex items-center rounded-xl size-16 h-full justify-center hover:bg-primary-50 transition no-drag-region"
-					href="/"
+					href="/chat"
 					draggable="false"
-					on:click={newChatHandler}
+					on:click={async (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						await goto('/chat');
+						newChatHandler();
+					}}
 				>
 					<img
 						crossorigin="anonymous"
@@ -878,7 +884,16 @@
 					/>
 				</a>
 
-				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
+				<a
+					href="/chat"
+					class="flex flex-1 px-1.5"
+					on:click={async (event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						await goto('/chat');
+						newChatHandler();
+					}}
+				>
 					<div
 						id="sidebar-webui-name"
 						class=" self-center font-medium text-primary font-primary text-xl"
@@ -923,26 +938,53 @@
 				}}
 			>
 				<div class="pb-1.5">
-					<div class="px-[0.4375rem] flex justify-center text-primary">
-						<a
-							id="sidebar-new-chat-button"
-							class="group grow flex items-center space-x-3 rounded-2xl px-2.5 py-2 hover:bg-primary-50 transition outline-none"
-							href="/"
-							draggable="false"
-							on:click={newChatHandler}
-							aria-label={$i18n.t('New Chat')}
-						>
-							<div class="self-center">
-								<PencilSquare className=" size-4.5" strokeWidth="2" />
-							</div>
+				<div class="px-[0.4375rem] flex justify-center text-primary">
+					<a
+						class="group grow flex items-center space-x-3 rounded-2xl px-2.5 py-2 hover:bg-primary-50 transition outline-none"
+						href="/"
+						draggable="false"
+						on:click={async (event) => {
+							event.preventDefault();
+							event.stopPropagation();
+							await goto('/');
+						}}
+						aria-label={$i18n.t('Dashboard')}
+					>
+						<div class="self-center">
+							<Document className=" size-5" strokeWidth="2" />
+						</div>
 
-							<div class="flex flex-1 self-center translate-y-[0.5px]">
-								<div class=" self-center text-sm font-primary">{$i18n.t('New Chat')}</div>
-							</div>
+						<div class="flex flex-1 self-center translate-y-[0.5px]">
+							<div class=" self-center text-sm font-primary">{$i18n.t('Dashboard')}</div>
+						</div>
+					</a>
+				</div>
 
-							<HotkeyHint name="newChat" className=" group-hover:visible invisible" />
-						</a>
-					</div>
+				<div class="px-[0.4375rem] flex justify-center text-primary">
+					<a
+						id="sidebar-new-chat-button"
+						class="group grow flex items-center space-x-3 rounded-2xl px-2.5 py-2 hover:bg-primary-50 transition outline-none"
+						href="/chat"
+						draggable="false"
+						on:click={async (event) => {
+							event.preventDefault();
+							event.stopPropagation();
+							await goto('/chat');
+							newChatHandler();
+						}}
+						aria-label={$i18n.t('New Chat')}
+					>
+						<div class="self-center">
+							<PencilSquare className=" size-5" strokeWidth="2" />
+						</div>
+
+						<div class="flex flex-1 self-center translate-y-[0.5px]">
+							<div class=" self-center text-sm font-primary">{$i18n.t('New Chat')}</div>
+						</div>
+
+						<HotkeyHint name="newChat" className=" group-hover:visible invisible" />
+					</a>
+				</div>
 
 					<div class="px-[0.4375rem] flex justify-center text-primary">
 						<button

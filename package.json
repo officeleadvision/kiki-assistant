@@ -5,7 +5,7 @@
 	"scripts": {
 		"sync:fetch": "git fetch upstream",
 		"sync:main": "git checkout main && git merge upstream/main && git push origin main",
-		"sync:custom": "git checkout kiki && git merge main",
+		"sync:custom": "git checkout kiki && git merge upstream/main",
 		"sync:all": "npm run sync:fetch && npm run sync:main && npm run sync:custom",
 		"dev": "npm run pyodide:fetch && vite dev --host",
 		"dev:5050": "npm run pyodide:fetch && vite dev --port 5050",

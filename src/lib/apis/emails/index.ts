@@ -61,6 +61,8 @@ export type EmailMailboxUpdateForm = {
 	name?: string;
 	description?: string;
 	model_id?: string;
+	mailbox_type?: 'personal' | 'shared';
+	channel_id?: string;
 	is_active?: boolean;
 	data?: Record<string, unknown>;
 	meta?: Record<string, unknown>;
@@ -74,6 +76,7 @@ export type WebhookInfo = {
 		title: string;
 		steps: string[];
 		body_template: Record<string, string>;
+		body_template_text?: string;
 	};
 };
 
@@ -323,4 +326,3 @@ export const getWebhookInfo = async (
 
 	return res;
 };
-

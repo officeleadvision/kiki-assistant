@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { toast } from 'svelte-sonner';
+	import { getContext } from 'svelte';
+	import Dashboard from '$lib/components/home/Dashboard.svelte';
+	import { WEBUI_NAME } from '$lib/stores';
 
-	import Chat from '$lib/components/chat/Chat.svelte';
-	import { page } from '$app/stores';
-
-	onMount(() => {
-		if ($page.url.searchParams.get('error')) {
-			toast.error($page.url.searchParams.get('error') || 'An unknown error occurred.');
-		}
-	});
+	const i18n = getContext('i18n');
 </script>
 
-<Chat />
+<svelte:head>
+	<title>{$i18n.t('Dashboard')} • {$WEBUI_NAME}</title>
+</svelte:head>
+
+<Dashboard />

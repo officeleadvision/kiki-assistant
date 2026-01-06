@@ -273,13 +273,13 @@ async def get_knowledge_by_id(id: str, user=Depends(get_verified_user)):
             or knowledge.user_id == user.id
             or has_access(user.id, "read", knowledge.access_control)
         ):
-
             return KnowledgeFilesResponse(
                 **knowledge.model_dump(),
                 write_access=(
                     user.id == knowledge.user_id
                     or has_access(user.id, "write", knowledge.access_control)
                 ),
+                files=Knowledges.get_file_metadatas_by_id(knowledge.id),
             )
     else:
         raise HTTPException(

@@ -567,6 +567,7 @@
 		);
 
 		if (!chatIdProp) {
+			await initNewChat();
 			loading = false;
 			await tick();
 		}
