@@ -10,11 +10,13 @@
 [![Discord](https://img.shields.io/badge/Discord-Open_WebUI-blue?logo=discord&logoColor=white)](https://discord.gg/5rJgQTnV4s)
 [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/tjbck)
 
+![Lead Me Banner](./banner.png)
+
 **Lead Me is an [extensible](https://docs.Lead Me.com/features/plugin/), feature-rich, and user-friendly self-hosted AI platform designed to operate entirely offline.** It supports various LLM runners like **Ollama** and **OpenAI-compatible APIs**, with **built-in inference engine** for RAG, making it a **powerful AI deployment solution**.
 
 Passionate about open-source AI? [Join our team →](https://careers.Lead Me.com/)
 
-![Lead Me Demo](./demo.gif)
+![Lead Me Demo](./demo.png)
 
 > [!TIP]  
 > **Looking for an [Enterprise Plan](https://docs.Lead Me.com/enterprise)?** – **[Speak with Our Sales Team Today!](https://docs.Lead Me.com/enterprise)**
