@@ -26,7 +26,11 @@
 		type SharePointFolderInfo
 	} from '$lib/utils/onedrive-file-picker';
 
+	import { DropdownMenu } from 'bits-ui';
+	import { flyAndScale } from '$lib/utils/transitions';
+
 	import DeleteConfirmDialog from '../common/ConfirmDialog.svelte';
+	import Dropdown from '../common/Dropdown.svelte';
 	import Tooltip from '../common/Tooltip.svelte';
 	import Spinner from '../common/Spinner.svelte';
 	import Plus from '../icons/Plus.svelte';
@@ -34,6 +38,10 @@
 	import ArrowPath from '../icons/ArrowPath.svelte';
 	import FolderOpen from '../icons/FolderOpen.svelte';
 	import Cloud from '../icons/Cloud.svelte';
+	import EllipsisVertical from '../icons/EllipsisVertical.svelte';
+	import DocumentPage from '../icons/DocumentPage.svelte';
+	import Lock from '../icons/Lock.svelte';
+	import XMark from '../icons/XMark.svelte';
 	import AccessControlModal from './common/AccessControlModal.svelte';
 
 	let loaded = false;
@@ -51,6 +59,11 @@
 	let logsPollingInterval: ReturnType<typeof setInterval> | null = null;
 	let creating = false;
 	let syncingIds: Set<string> = new Set();
+	let openMenuFor: string | null = null;
+
+	const closeActionMenu = () => {
+		openMenuFor = null;
+	};
 
 	// Create form state
 	let newSyncName = '';
@@ -791,101 +804,110 @@
 							</button>
 
 							<div class="flex items-center gap-1">
-								<!-- Play/Sync button -->
-								{#if sync.sync_status !== 'syncing'}
-									<Tooltip content={$i18n.t('Sync Now')}>
-										<button
-											class="p-2 hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600 rounded-lg transition disabled:opacity-50"
-											disabled={syncingIds.has(sync.id)}
-											on:click={() => handleExecuteSync(sync)}
-										>
-											{#if syncingIds.has(sync.id)}
-												<Spinner className="size-4" />
-											{:else}
-												<!-- Play icon -->
-												<svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
-													<path
-														fill-rule="evenodd"
-														d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-														clip-rule="evenodd"
-													/>
-												</svg>
-											{/if}
-										</button>
-									</Tooltip>
-								{:else}
-									<!-- Stop/Cancel button when syncing -->
-									<Tooltip content={$i18n.t('Cancel Sync')}>
-										<button
-											class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition"
-											on:click={() => handleCancelSync(sync)}
-										>
-											<!-- Stop icon -->
-											<svg class="size-4" fill="currentColor" viewBox="0 0 20 20">
-												<path
-													fill-rule="evenodd"
-													d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z"
-													clip-rule="evenodd"
-												/>
-											</svg>
-										</button>
-									</Tooltip>
-								{/if}
-
-								<!-- Access Control button (only for owners/admins) -->
-								{#if sync.user_id === $user?.id || $user?.role === 'admin'}
-									<Tooltip content={$i18n.t('Access Control')}>
-										<button
-											class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
-											on:click={() => openAccessControlModal(sync)}
-										>
-											{#if sync.access_control === null}
-												<!-- Public (unlocked) icon -->
-												<svg
-													class="size-4 text-green-500"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
-													/>
-												</svg>
-											{:else}
-												<!-- Private (locked) icon -->
-												<svg
-													class="size-4 text-gray-500"
-													fill="none"
-													stroke="currentColor"
-													viewBox="0 0 24 24"
-												>
-													<path
-														stroke-linecap="round"
-														stroke-linejoin="round"
-														stroke-width="2"
-														d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-													/>
-												</svg>
-											{/if}
-										</button>
-									</Tooltip>
-								{/if}
-
-								<!-- Delete button -->
-								<Tooltip content={$i18n.t('Delete')}>
-									<button
-										class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-500 rounded-lg transition"
-										on:click={() => {
-											selectedSync = sync;
-											showDeleteConfirm = true;
+								<div class="relative">
+									<Dropdown
+										show={openMenuFor === sync.id}
+										on:change={(event) => {
+											if (event.detail === false) {
+												closeActionMenu();
+											} else {
+												openMenuFor = sync.id;
+											}
 										}}
 									>
-										<GarbageBin className="size-4" />
-									</button>
-								</Tooltip>
+										<Tooltip content={$i18n.t('Actions')}>
+											<button
+												on:click={(e) => {
+													e.stopPropagation();
+													openMenuFor = openMenuFor === sync.id ? null : sync.id;
+												}}
+												class="p-2 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+												type="button"
+											>
+												<EllipsisVertical className="size-4" />
+											</button>
+										</Tooltip>
+										<div slot="content">
+											<DropdownMenu.Content
+												class="w-48 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-1"
+												sideOffset={8}
+												side="bottom"
+												align="end"
+												transition={flyAndScale}
+											>
+												<!-- Sync Now / Cancel Sync -->
+												{#if sync.sync_status !== 'syncing'}
+													<DropdownMenu.Item
+														class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+														on:click={() => {
+															closeActionMenu();
+															handleExecuteSync(sync);
+														}}
+													>
+														{#if syncingIds.has(sync.id)}
+															<Spinner className="size-4" />
+														{:else}
+															<ArrowPath className="size-4" />
+														{/if}
+														{$i18n.t('Sync Now')}
+													</DropdownMenu.Item>
+												{:else}
+													<DropdownMenu.Item
+														class="w-full text-left px-3 py-2 text-sm text-orange-600 dark:text-orange-400 rounded-xl hover:bg-orange-50 dark:hover:bg-orange-900/30 cursor-pointer flex items-center gap-2"
+														on:click={() => {
+															closeActionMenu();
+															handleCancelSync(sync);
+														}}
+													>
+														<XMark className="size-4" />
+														{$i18n.t('Cancel Sync')}
+													</DropdownMenu.Item>
+												{/if}
+
+												<!-- View Logs -->
+												<DropdownMenu.Item
+													class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+													on:click={() => {
+														closeActionMenu();
+														openLogsModal(sync);
+													}}
+												>
+													<DocumentPage className="size-4" />
+													{$i18n.t('View Logs')}
+												</DropdownMenu.Item>
+
+												<!-- Access Control (only for owners/admins) -->
+												{#if sync.user_id === $user?.id || $user?.role === 'admin'}
+													<DropdownMenu.Item
+														class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+														on:click={() => {
+															closeActionMenu();
+															openAccessControlModal(sync);
+														}}
+													>
+														<Lock className="size-4" />
+														{sync.access_control === null
+															? $i18n.t('Set Access Control')
+															: $i18n.t('Edit Access Control')}
+													</DropdownMenu.Item>
+												{/if}
+
+												<!-- Delete -->
+												<DropdownMenu.Item
+													class="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 cursor-pointer flex items-center gap-2"
+													on:click={() => {
+														closeActionMenu();
+														selectedSync = sync;
+														showDeleteConfirm = true;
+													}}
+												>
+													<GarbageBin className="size-4" />
+													{$i18n.t('Delete')}
+												</DropdownMenu.Item>
+											</DropdownMenu.Content>
+										</div>
+									</Dropdown>
+								</div>
 							</div>
 						</div>
 					</div>

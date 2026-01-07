@@ -491,7 +491,11 @@
 		{:else}
 			<div class=" w-full h-full flex flex-col justify-center items-center my-16 mb-24">
 				<div class="max-w-md text-center">
-					<div class=" text-3xl mb-3">😕</div>
+					<img
+						src="/assets/emojis/no-files.svg"
+						alt="No files"
+						class="size-12 mb-3 opacity-50 dark:invert mx-auto"
+					/>
 					<div class=" text-lg font-medium mb-1">{$i18n.t('No tools found')}</div>
 					<div class=" text-gray-500 text-center text-xs">
 						{$i18n.t('Try adjusting your search or filter to find what you are looking for.')}

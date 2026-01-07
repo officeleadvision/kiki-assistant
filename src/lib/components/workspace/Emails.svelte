@@ -38,6 +38,11 @@
 	import Clipboard from '../icons/Clipboard.svelte';
 	import EllipsisVertical from '../icons/EllipsisVertical.svelte';
 	import Search from '../icons/Search.svelte';
+	import Cog6 from '../icons/Cog6.svelte';
+	import Check from '../icons/Check.svelte';
+	import XMark from '../icons/XMark.svelte';
+	import Hashtag from '../icons/Hashtag.svelte';
+	import GarbageBin from '../icons/GarbageBin.svelte';
 
 	let loaded = false;
 	let mailboxes: EmailMailbox[] = [];
@@ -163,10 +168,13 @@
 
 	const openWebhookModal = async (mailbox: EmailMailbox) => {
 		webhookMailbox = mailbox;
+		webhookInfo = null;
+		showWebhookModal = true;
+
 		try {
 			webhookInfo = await getWebhookInfo(localStorage.token, mailbox.id);
-			showWebhookModal = true;
 		} catch (e) {
+			showWebhookModal = false;
 			toast.error(`${e}`);
 		}
 	};
@@ -425,17 +433,17 @@
 						showCreateModal = false;
 					}}
 				>
-					{$i18n.t('Cancel')}
+					<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('Cancel')}</div>
 				</button>
 				<button
-					class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+					class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 					disabled={creating || !selectedChannelId || !newMailboxName || !newMailboxAddress}
 					on:click={handleCreateMailbox}
 				>
 					{#if creating}
 						<Spinner className="size-4" />
 					{/if}
-					{$i18n.t('Create')}
+					<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('Create')}</div>
 				</button>
 			</div>
 		</div>
@@ -443,7 +451,7 @@
 {/if}
 
 <!-- Webhook Info Modal -->
-{#if showWebhookModal && webhookInfo}
+{#if showWebhookModal}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
 		on:click|self={() => (showWebhookModal = false)}
@@ -461,76 +469,85 @@
 		>
 			<h2 class="text-xl font-semibold mb-4">{$i18n.t('Power Automate Setup')}</h2>
 
-			<div class="space-y-4">
-				<div>
-					<label for="webhook-url" class="block text-sm font-medium mb-1"
-						>{$i18n.t('Webhook URL')}</label
+			{#if webhookInfo}
+				<div class="space-y-4">
+					<div>
+						<label for="webhook-url" class="block text-sm font-medium mb-1"
+							>{$i18n.t('Webhook URL')}</label
+						>
+						<div class="flex gap-2">
+							<input
+								id="webhook-url"
+								type="text"
+								readonly
+								value={webhookInfo.webhook_url}
+								class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-sm font-mono"
+							/>
+							<button
+								class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+								on:click={() => copyToClipboard(webhookInfo?.webhook_url || '')}
+							>
+								<Clipboard className="size-4" />
+							</button>
+						</div>
+					</div>
+
+					<div
+						class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4"
 					>
-					<div class="flex gap-2">
-						<input
-							id="webhook-url"
-							type="text"
-							readonly
-							value={webhookInfo.webhook_url}
-							class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 text-sm font-mono"
-						/>
-						<button
-							class="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-							on:click={() => copyToClipboard(webhookInfo?.webhook_url || '')}
+						<h3 class="font-medium text-amber-800 dark:text-amber-200 mb-2">
+							{webhookInfo.instructions.title}
+						</h3>
+						<ol
+							class="list-decimal list-inside space-y-1 text-sm text-amber-700 dark:text-amber-300"
 						>
-							<Clipboard className="size-4" />
+							{#each webhookInfo.instructions.steps as step}
+								<li>{step}</li>
+							{/each}
+						</ol>
+					</div>
+
+					<div>
+						<p class="text-sm font-medium mb-1">{$i18n.t('Request Body Template')}</p>
+						<div class="relative">
+							<pre
+								class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 text-xs overflow-x-auto">{requestBodyTemplate}</pre>
+							<button
+								class="absolute top-2 right-2 px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition"
+								on:click={() => copyToClipboard(requestBodyTemplate)}
+							>
+								{$i18n.t('Copy')}
+							</button>
+						</div>
+					</div>
+
+					<div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+						<button
+							class="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+							on:click={handleRegenerateToken}
+						>
+							{$i18n.t('Regenerate Webhook Token')}
 						</button>
+						<p class="text-xs text-gray-500 mt-1">
+							{$i18n.t('Warning: This will invalidate the current webhook URL')}
+						</p>
 					</div>
 				</div>
 
-				<div
-					class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4"
-				>
-					<h3 class="font-medium text-amber-800 dark:text-amber-200 mb-2">
-						{webhookInfo.instructions.title}
-					</h3>
-					<ol class="list-decimal list-inside space-y-1 text-sm text-amber-700 dark:text-amber-300">
-						{#each webhookInfo.instructions.steps as step}
-							<li>{step}</li>
-						{/each}
-					</ol>
-				</div>
-
-				<div>
-					<p class="text-sm font-medium mb-1">{$i18n.t('Request Body Template')}</p>
-					<div class="relative">
-						<pre
-							class="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 text-xs overflow-x-auto">{requestBodyTemplate}</pre>
-						<button
-							class="absolute top-2 right-2 px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition"
-							on:click={() => copyToClipboard(requestBodyTemplate)}
-						>
-							{$i18n.t('Copy')}
-						</button>
-					</div>
-				</div>
-
-				<div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+				<div class="flex justify-end mt-6">
 					<button
-						class="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-						on:click={handleRegenerateToken}
+						class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
+						on:click={() => (showWebhookModal = false)}
 					>
-						{$i18n.t('Regenerate Webhook Token')}
+						{$i18n.t('Close')}
 					</button>
-					<p class="text-xs text-gray-500 mt-1">
-						{$i18n.t('Warning: This will invalidate the current webhook URL')}
-					</p>
 				</div>
-			</div>
-
-			<div class="flex justify-end mt-6">
-				<button
-					class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition"
-					on:click={() => (showWebhookModal = false)}
-				>
-					{$i18n.t('Close')}
-				</button>
-			</div>
+			{:else}
+				<div class="flex flex-col items-center justify-center py-12 gap-4">
+					<Spinner className="size-8" />
+					<p class="text-sm text-gray-500">{$i18n.t('Loading setup instructions...')}</p>
+				</div>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -551,7 +568,7 @@
 				{$i18n.t('Create a mailbox to start monitoring emails via Power Automate')}
 			</p>
 			<button
-				class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-full hover:bg-blue-700 transition"
+				class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 				on:click={() => (showCreateModal = true)}
 			>
 				<Plus className="size-4" />
@@ -568,11 +585,11 @@
 					</p>
 				</div>
 				<button
-					class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-black rounded-full hover:bg-gray-900 transition"
+					class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 					on:click={() => (showCreateModal = true)}
 				>
 					<Plus className="size-4" />
-					{$i18n.t('Add Mailbox')}
+					<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('Add Mailbox')}</div>
 				</button>
 			</div>
 
@@ -606,16 +623,23 @@
 							</div>
 						{/if}
 						{#each filteredMailboxes as mailbox}
-							<button
-								class={`w-full text-left rounded-2xl border px-3 py-3 transition ${
+							<div
+								class={`w-full text-left rounded-2xl border px-3 py-3 transition cursor-pointer ${
 									selectedMailboxId === mailbox.id
 										? 'border-blue-500 bg-blue-50/50 dark:bg-blue-900/40'
 										: 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
 								}`}
-								type="button"
+								role="button"
+								tabindex="0"
 								on:click={() => {
 									selectedMailboxId = mailbox.id;
 									closeActionMenu();
+								}}
+								on:keydown={(e) => {
+									if (e.key === 'Enter' || e.key === ' ') {
+										selectedMailboxId = mailbox.id;
+										closeActionMenu();
+									}
 								}}
 							>
 								<div class="flex items-start justify-between gap-3">
@@ -628,80 +652,85 @@
 										</p>
 									</div>
 									<div class="flex items-center gap-2">
-										<Dropdown
-											show={openMenuFor === mailbox.id}
-											on:change={(event) => {
-												if (event.detail === false) {
-													closeActionMenu();
-												} else {
-													openMenuFor = mailbox.id;
-												}
-											}}
-										>
-											<Tooltip content={$i18n.t('Actions')}>
-												<button
-													on:click={(event) => {
-														event.stopPropagation();
-														toggleActionMenu(mailbox.id);
-													}}
-													class="p-2 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-													type="button"
-												>
-													<EllipsisVertical className="size-4" />
-												</button>
-											</Tooltip>
-											<div slot="content">
-												<DropdownMenu.Content
-													class="w-48 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-1"
-													sideOffset={8}
-													side="bottom"
-													align="end"
-													transition={flyAndScale}
-												>
-													<DropdownMenu.Item
-														class="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
-														on:click={() => {
-															openWebhookModal(mailbox);
-															closeActionMenu();
+										<div class="relative">
+											<Dropdown
+												show={openMenuFor === mailbox.id}
+												on:change={(event) => {
+													if (event.detail === false) {
+														closeActionMenu();
+													} else {
+														openMenuFor = mailbox.id;
+													}
+												}}
+											>
+												<Tooltip content={$i18n.t('Actions')}>
+													<button
+														on:click={(e) => {
+															e.stopPropagation();
+															openMenuFor = openMenuFor === mailbox.id ? null : mailbox.id;
 														}}
+														class="p-2 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+														type="button"
 													>
-														{$i18n.t('Power Automate Setup')}
-													</DropdownMenu.Item>
-													<DropdownMenu.Item
-														class="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
-														on:click={() => {
-															toggleMailboxActive(mailbox);
-															closeActionMenu();
-														}}
+														<EllipsisVertical className="size-4" />
+													</button>
+												</Tooltip>
+												<div slot="content">
+													<DropdownMenu.Content
+														class="w-48 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-lg p-1"
+														sideOffset={8}
+														side="bottom"
+														align="end"
+														transition={flyAndScale}
 													>
-														{mailbox.is_active
-															? $i18n.t('Deactivate mailbox')
-															: $i18n.t('Activate mailbox')}
-													</DropdownMenu.Item>
-													{#if mailbox.channel_id}
 														<DropdownMenu.Item
-															class="px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
+															class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
 															on:click={() => {
-																goToChannel(mailbox.channel_id);
-																closeActionMenu();
+																openWebhookModal(mailbox);
 															}}
 														>
-															{$i18n.t('Go to Channel')}
+															<Cog6 className="size-4" />
+															{$i18n.t('Power Automate Setup')}
 														</DropdownMenu.Item>
-													{/if}
-													<DropdownMenu.Item
-														class="px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30"
-														on:click={() => {
-															selectedMailboxId = mailbox.id;
-															showDeleteConfirm = true;
-															closeActionMenu();
-														}}
-													>
-														{$i18n.t('Delete mailbox')}
-													</DropdownMenu.Item>
-												</DropdownMenu.Content>
-											</div>
-										</Dropdown>
+														<DropdownMenu.Item
+															class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+															on:click={() => {
+																toggleMailboxActive(mailbox);
+															}}
+														>
+															{#if mailbox.is_active}
+																<XMark className="size-4" />
+																{$i18n.t('Deactivate mailbox')}
+															{:else}
+																<Check className="size-4" />
+																{$i18n.t('Activate mailbox')}
+															{/if}
+														</DropdownMenu.Item>
+														{#if mailbox.channel_id}
+															<DropdownMenu.Item
+																class="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-200 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer flex items-center gap-2"
+																on:click={() => {
+																	goToChannel(mailbox.channel_id);
+																}}
+															>
+																<Hashtag className="size-4" />
+																{$i18n.t('Go to Channel')}
+															</DropdownMenu.Item>
+														{/if}
+														<DropdownMenu.Item
+															class="w-full text-left px-3 py-2 text-sm text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 cursor-pointer flex items-center gap-2"
+															on:click={() => {
+																selectedMailboxId = mailbox.id;
+																showDeleteConfirm = true;
+															}}
+														>
+															<GarbageBin className="size-4" />
+															{$i18n.t('Delete mailbox')}
+														</DropdownMenu.Item>
+													</DropdownMenu.Content>
+												</div>
+											</Dropdown>
+										</div>
 										<div class="scale-[0.9]">
 											<Switch
 												state={mailbox.is_active}
@@ -730,7 +759,7 @@
 										{mailbox.description}
 									</p>
 								{/if}
-							</button>
+							</div>
 						{/each}
 					</div>
 				</div>
@@ -757,7 +786,7 @@
 									</div>
 
 									<button
-										class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-black rounded-full hover:bg-gray-900 transition disabled:opacity-60 disabled:cursor-not-allowed"
+										class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 										disabled={isSaving || !selectedMailbox}
 										on:click={handleSaveMailbox}
 										type="button"
@@ -765,7 +794,7 @@
 										{#if isSaving}
 											<Spinner className="size-4" />
 										{/if}
-										{$i18n.t('Save')}
+										<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('Save')}</div>
 									</button>
 								</div>
 
@@ -891,16 +920,29 @@
 											</p>
 										</div>
 										<button
-											class="flex items-center gap-1 px-3 py-1 text-[11px] font-semibold text-blue-600 rounded-full border border-blue-100 hover:bg-blue-50 dark:border-blue-900 dark:text-blue-300 dark:hover:bg-blue-900/40 transition"
+											class="px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
 											on:click={() => copyToClipboard(selectedMailbox.webhook_token ?? '')}
 										>
 											<Clipboard className="size-4" />
-											{$i18n.t('Copy')}
+											<div class=" hidden md:block md:ml-1 text-xs">{$i18n.t('Copy')}</div>
 										</button>
 									</div>
 									<p class="text-[11px] text-gray-500 dark:text-gray-400">
 										{$i18n.t('Use this token to configure Power Automate or other automations')}
 									</p>
+
+									<button
+										class="flex items-center justify-center px-2 py-1.5 rounded-xl bg-black text-white dark:bg-white dark:text-black transition font-medium text-sm flex items-center"
+										on:click={() => {
+											if (selectedMailbox) {
+												openWebhookModal(selectedMailbox);
+											}
+										}}
+									>
+										<div class=" hidden md:block md:ml-1 text-xs">
+											{$i18n.t('Power Automate Setup Instructions')}
+										</div>
+									</button>
 								</div>
 							</div>
 						</div>

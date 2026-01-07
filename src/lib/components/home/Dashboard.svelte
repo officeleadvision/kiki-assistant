@@ -80,7 +80,9 @@
 			/>
 
 			<div class="flex flex-col items-center gap-3 text-primary">
-				<h2 class="text-3xl font-semibold">{$i18n.t('Welcome to Kiki')}</h2>
+				<h2 class="text-3xl font-semibold">
+					{$i18n.t('Welcome to {{model}}', { model: defaultModelName })}
+				</h2>
 				<p class="mt-2 text-center text-sm leading-tight text-primary/80">
 					{$i18n.t(
 						'Your personal AI assistant for Lead Me with analytics, recommendations and communication'

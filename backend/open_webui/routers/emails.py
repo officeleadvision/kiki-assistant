@@ -132,7 +132,11 @@ async def get_mailbox_by_id(id: str, user=Depends(get_verified_user)):
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
     
-    if mailbox.user_id != user.id and user.role != "admin":
+    if (
+        mailbox.user_id != user.id
+        and user.role != "admin"
+        and not has_access(user.id, "read", mailbox.access_control)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=ERROR_MESSAGES.UNAUTHORIZED,
@@ -164,7 +168,11 @@ async def update_mailbox(
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
     
-    if mailbox.user_id != user.id and user.role != "admin":
+    if (
+        mailbox.user_id != user.id
+        and user.role != "admin"
+        and not has_access(user.id, "write", mailbox.access_control)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=ERROR_MESSAGES.UNAUTHORIZED,
@@ -196,7 +204,11 @@ async def regenerate_webhook_token(id: str, user=Depends(get_verified_user)):
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
     
-    if mailbox.user_id != user.id and user.role != "admin":
+    if (
+        mailbox.user_id != user.id
+        and user.role != "admin"
+        and not has_access(user.id, "write", mailbox.access_control)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=ERROR_MESSAGES.UNAUTHORIZED,
@@ -227,7 +239,11 @@ async def delete_mailbox(id: str, user=Depends(get_verified_user)):
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
     
-    if mailbox.user_id != user.id and user.role != "admin":
+    if (
+        mailbox.user_id != user.id
+        and user.role != "admin"
+        and not has_access(user.id, "write", mailbox.access_control)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=ERROR_MESSAGES.UNAUTHORIZED,
@@ -600,7 +616,11 @@ async def get_webhook_info(
             detail=ERROR_MESSAGES.NOT_FOUND,
         )
     
-    if mailbox.user_id != user.id and user.role != "admin":
+    if (
+        mailbox.user_id != user.id
+        and user.role != "admin"
+        and not has_access(user.id, "read", mailbox.access_control)
+    ):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail=ERROR_MESSAGES.UNAUTHORIZED,

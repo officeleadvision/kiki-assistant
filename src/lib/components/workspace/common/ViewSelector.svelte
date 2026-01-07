@@ -11,11 +11,17 @@
 	export let placeholder = $i18n.t('Select view');
 	export let onChange: (value: string) => void = () => {};
 
-	const items = [
-		{ value: '', label: $i18n.t('All') },
-		{ value: 'created', label: $i18n.t('Created by you') },
-		{ value: 'shared', label: $i18n.t('Shared with you') }
-	];
+const items = [
+	{ value: '', label: $i18n.t('All') },
+	{ value: 'created', label: $i18n.t('Created by you') },
+	{ value: 'shared', label: $i18n.t('Shared with you') }
+];
+
+let selectedItem: { value: string; label: string } | undefined;
+let triggerLabel = placeholder;
+
+$: selectedItem = items.find((item) => item.value === value);
+$: triggerLabel = selectedItem ? selectedItem.label ?? selectedItem.value : placeholder;
 </script>
 
 <Select.Root
@@ -30,10 +36,14 @@
 		class="relative w-full flex items-center gap-0.5 px-2.5 py-1.5 bg-gray-50 dark:bg-gray-850 rounded-xl "
 		aria-label={placeholder}
 	>
-		<Select.Value
-			class="inline-flex h-input px-0.5 w-full outline-hidden bg-transparent truncate  placeholder-gray-400  focus:outline-hidden"
-			{placeholder}
-		/>
+		<span
+			class={`inline-flex h-input px-0.5 w-full outline-hidden bg-transparent truncate focus:outline-hidden ${
+				selectedItem ? '' : 'text-gray-400'
+			}`}
+			title={triggerLabel}
+		>
+			{triggerLabel}
+		</span>
 		<ChevronDown className=" size-3.5" strokeWidth="2.5" />
 	</Select.Trigger>
 
