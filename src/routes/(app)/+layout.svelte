@@ -46,9 +46,6 @@ import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import UpdateInfoToast from '$lib/components/layout/UpdateInfoToast.svelte';
 	import Spinner from '$lib/components/common/Spinner.svelte';
 	import { Shortcut, shortcuts } from '$lib/shortcuts';
-import Tooltip from '$lib/components/common/Tooltip.svelte';
-import SidebarIcon from '$lib/components/icons/Sidebar.svelte';
-import UserMenu from '$lib/components/layout/Sidebar/UserMenu.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -326,65 +323,6 @@ import UserMenu from '$lib/components/layout/Sidebar/UserMenu.svelte';
 
 {#if $user}
 	<div class="app relative">
-		<nav
-			class="px-2.5 pt-1.5 backdrop-blur-xl w-full drag-region border-b border-gray-200/70 dark:border-gray-800/70 bg-white/80 dark:bg-gray-950/70 sticky top-0 z-40"
-		>
-			<div class="flex items-center justify-between">
-				<div class="flex items-center gap-1">
-					{#if $mobile}
-						<div class="{$showSidebar ? 'md:hidden' : ''} flex flex-none items-center">
-							<Tooltip
-								content={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
-								interactive={true}
-							>
-								<button
-									id="sidebar-toggle-button"
-									class="cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition"
-									on:click={() => {
-										showSidebar.set(!$showSidebar);
-									}}
-									aria-label={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
-								>
-									<div class="self-center p-1.5">
-										<SidebarIcon />
-									</div>
-								</button>
-							</Tooltip>
-						</div>
-					{/if}
-				</div>
-
-				<div class="flex items-center gap-1">
-					{#if $user}
-						<UserMenu
-							className="max-w-[240px]"
-							role={$user?.role}
-							help={true}
-							on:show={(e) => {
-								if (e.detail === 'archived-chat') {
-									showArchivedChats.set(true);
-								}
-							}}
-						>
-							<button
-								class="select-none flex rounded-xl p-1.5 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
-								aria-label="User Menu"
-							>
-								<div class="self-center">
-									<img
-										src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
-										class="size-6 object-cover rounded-full"
-										alt="User profile"
-										draggable="false"
-									/>
-								</div>
-							</button>
-						</UserMenu>
-					{/if}
-				</div>
-			</div>
-		</nav>
-
 		<div
 			class=" text-primary bg-white h-screen max-h-[100dvh] overflow-auto flex flex-row justify-end"
 		>

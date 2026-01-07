@@ -5,11 +5,14 @@
 	import { toast } from 'svelte-sonner';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { WEBUI_API_BASE_URL } from '$lib/constants';
 	import ChatPlus from '$lib/components/icons/ChatPlus.svelte';
 	import Document from '$lib/components/icons/Document.svelte';
 	import Note from '$lib/components/icons/Note.svelte';
 	import Search from '$lib/components/icons/Search.svelte';
-	import Sidebar from '$lib/components/icons/Sidebar.svelte';
+	import SidebarIcon from '$lib/components/icons/Sidebar.svelte';
+	import Tooltip from '$lib/components/common/Tooltip.svelte';
+	import UserMenu from '$lib/components/layout/Sidebar/UserMenu.svelte';
 	import {
 		config,
 		models,
@@ -17,6 +20,8 @@
 		showSearch,
 		mobile,
 		showSidebar,
+		showArchivedChats,
+		user,
 		type Model
 	} from '$lib/stores';
 
@@ -71,6 +76,66 @@
 <div
 	class="flex h-screen max-h-dvh w-full flex-col transition-width duration-200 ease-in-out bg-slate-50 dark:bg-slate-950"
 >
+	<!-- Header with user menu -->
+	<nav
+		class="px-2.5 pt-1.5 pb-1.5 backdrop-blur-xl w-full drag-region border-b border-gray-200/70 dark:border-gray-800/70 bg-white/80 dark:bg-gray-950/70 sticky top-0 z-40"
+	>
+		<div class="flex items-center justify-between">
+			<div class="flex items-center gap-1">
+				{#if $mobile}
+					<div class="{$showSidebar ? 'md:hidden' : ''} flex flex-none items-center">
+						<Tooltip
+							content={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
+							interactive={true}
+						>
+							<button
+								id="sidebar-toggle-button"
+								class="cursor-pointer flex rounded-lg hover:bg-gray-100 dark:hover:bg-gray-850 transition"
+								on:click={() => {
+									showSidebar.set(!$showSidebar);
+								}}
+								aria-label={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
+							>
+								<div class="self-center p-1.5">
+									<SidebarIcon />
+								</div>
+							</button>
+						</Tooltip>
+					</div>
+				{/if}
+			</div>
+
+			<div class="flex items-center gap-1">
+				{#if $user}
+					<UserMenu
+						className="max-w-[240px]"
+						role={$user?.role}
+						help={true}
+						on:show={(e) => {
+							if (e.detail === 'archived-chat') {
+								showArchivedChats.set(true);
+							}
+						}}
+					>
+						<button
+							class="select-none flex rounded-xl p-1.5 hover:bg-gray-50 dark:hover:bg-gray-850 transition"
+							aria-label="User Menu"
+						>
+							<div class="self-center">
+								<img
+									src={`${WEBUI_API_BASE_URL}/users/${$user?.id}/profile/image`}
+									class="size-6 object-cover rounded-full"
+									alt="User profile"
+									draggable="false"
+								/>
+							</div>
+						</button>
+					</UserMenu>
+				{/if}
+			</div>
+		</div>
+	</nav>
+
 	<div class="flex-1 overflow-y-auto px-4 py-6 md:px-8">
 		<div class="mx-auto flex max-w-5xl flex-col gap-6">
 			<img
